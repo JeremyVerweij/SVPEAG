@@ -4,8 +4,16 @@ import vcp.components.*;
 import vcp.swing.CommandLineWindow;
 import vcp.swing.PlayGround;
 import vcp.swing.Window;
+import vcp.walker.DataType;
+import vcp.walker.NodeColors;
+import vcp.walker.nodes.PrintNode;
+import vcp.walker.nodes.RunNode;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class App {
     public static final int NO_OPTIONS = 0;
@@ -18,43 +26,60 @@ public class App {
     private final CommandLineWindow commandLineWindow;
     private final Window mainWindow;
     private final PlayGround playGround;
+    private final NodeColors nodeColors;
+    private final ContextMenuComponent contextMenu;
+    private final Map<DataType, List<String>> variables;
 
     public App(String name, int options){
         this.commandLineWindow = new CommandLineWindow();
         this.mainWindow = new Window(name);
-        this.playGround = new PlayGround();
+        this.contextMenu = new ContextMenuComponent(this, 0 , 0);
+        this.playGround = new PlayGround(this.contextMenu);
+        this.nodeColors = new NodeColors();
+        this.variables = new HashMap<>();
 
         this.commandLineWindow.setVisible(checkOption(options, SHOW_COMMAND_LINE));
 
-        ClickComponent clickComponent = new ClickComponent(this, 0, 0);
-        PrintValueComponent printValueComponent = new PrintValueComponent(this, 1000, 200);
-        WaitComponent waitComponent = new WaitComponent(this, 200, 400);
-        PrintValueComponent printValueComponent1 = new PrintValueComponent(this, 400, 200);
-        AndComponent andComponent = new AndComponent(this, 600, 200);
-
-        StringComponent stringComponent = new StringComponent(this, 800, 250);
-        StringComponent stringComponent1 = new StringComponent(this, 200, 200);
-
-        clickComponent.addConnection(stringComponent1, 0);
-        clickComponent.addConnection(waitComponent, 0);
-        printValueComponent1.addConnection(andComponent, 0);
-        waitComponent.addConnection(andComponent, 1);
-        andComponent.addConnection(stringComponent, 0);
-        andComponent.addConnection(printValueComponent, 0);
-        stringComponent.addConnection(printValueComponent, 1);
-        clickComponent.addConnection(printValueComponent1, 0);
-        stringComponent1.addConnection(printValueComponent1, 1);
-
-        this.playGround.addComponent(clickComponent);
-        this.playGround.addComponent(printValueComponent);
-        this.playGround.addComponent(printValueComponent1);
-        this.playGround.addComponent(waitComponent);
-        this.playGround.addComponent(andComponent);
-        this.playGround.addComponent(stringComponent);
-        this.playGround.addComponent(stringComponent1);
-
         this.mainWindow.getContentPane().setLayout(new BorderLayout());
         this.mainWindow.getContentPane().add(this.playGround);
+
+        this.initNodeColors();
+        this.testPlayground();
+    }
+
+    private void initNodeColors(){
+        this.nodeColors.addColor(RunNode.class, Color.GREEN);
+        this.nodeColors.addColor(PrintNode.class, Color.RED);
+    }
+
+    private void testPlayground(){
+        createVar(new DataType.StringType(), "testString");
+
+        this.playGround.addComponent(new NodeComponent(this, 0, 0, new RunNode()));
+        this.playGround.addComponent(new NodeComponent(this, 100, 0, new PrintNode()));
+    }
+
+    public void requestContextMenu(NodeComponent nodeComponent){
+        this.contextMenu.show(nodeComponent);
+    }
+
+    public void createVar(DataType dataType, String name){
+        if (!this.variables.containsKey(dataType))
+            this.variables.put(dataType, new ArrayList<>());
+
+        this.variables.get(dataType).add(name);
+    }
+
+    public boolean existVar(DataType dataType, String name){
+        if (!this.variables.containsKey(dataType)) return false;
+        return this.variables.get(dataType).contains(name);
+    }
+
+    public List<String> getVarsForType(DataType dataType){
+        if (!this.variables.containsKey(dataType))
+            this.variables.put(dataType, new ArrayList<>());
+
+        return this.variables.get(dataType);
     }
 
     public CommandLineWindow getCommandLineWindow() {
@@ -67,5 +92,9 @@ public class App {
 
     public PlayGround getPlayGround() {
         return playGround;
+    }
+
+    public NodeColors getNodeColors() {
+        return nodeColors;
     }
 }

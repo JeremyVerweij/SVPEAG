@@ -21,6 +21,14 @@ public class CommandLineWindow extends Window{
     }
 
     private void addMessage(String message, String prefix, Color color){
+        if (message.contains("\n")){
+            for (String subMessage : message.split("\n")) {
+                addMessage(subMessage, prefix, color);
+            }
+
+            return;
+        }
+
         SwingUtilities.invokeLater(() -> {
             JLabel label = new JLabel("[" + prefix + "] " + message);
             label.setForeground(color);

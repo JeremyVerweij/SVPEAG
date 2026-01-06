@@ -1,6 +1,10 @@
 package vcp.swing;
 
 import vcp.components.Component;
+import vcp.components.NodeComponent;
+import vcp.components.nodeParts.Connector;
+import vcp.components.ContextMenuComponent;
+import vcp.walker.NodeTree;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,83 +22,22 @@ public class PlayGround extends JComponent {
 
     private Point dragStart = null;
     private Component draggingComponent = null;
+    private Connector currentlyConnecting = null;
+    private Point mousePos = new Point();
 
+    private final ContextMenuComponent contextMenu;
     private final List<Component> components;
-    private final List<LaterInvokers> invokeLater;
 
-    public PlayGround(){
+    public PlayGround(ContextMenuComponent contextMenu){
         this.components = new ArrayList<>();
-        this.invokeLater = new ArrayList<>();
+        this.contextMenu = contextMenu;
 
         setLayout(null);
         setOpaque(true);
         setBackground(Color.WHITE);
         setSize(300, 300);
 
-        MouseAdapter mouseAdapter = new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (SwingUtilities.isLeftMouseButton(e)) {
-                    dragStart = e.getPoint();
-
-                    Point m = new Point(e.getPoint());
-                    adjustPoint(m);
-
-                    for (Component component : components) {
-                        if (component.inBounds(m)){
-                            draggingComponent = component;
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                dragStart = null;
-                draggingComponent = null;
-            }
-
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                if (dragStart != null) {
-                    Point dragEnd = e.getPoint();
-
-                    if (draggingComponent != null){
-                        Point de = new Point(dragEnd);
-                        adjustPoint(de);
-                        adjustPoint(dragStart);
-
-                        draggingComponent.onDrag(de.x - dragStart.x, de.y - dragStart.y);
-                    }else{
-                        offsetX += dragEnd.x - dragStart.x / Math.min(scale * 2, 1);
-                        offsetY += dragEnd.y - dragStart.y / Math.min(scale * 2, 1);
-                    }
-
-                    dragStart = dragEnd;
-                    repaint();
-                }
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                Point m = new Point(e.getPoint());
-                adjustPoint(m);
-
-                for (Component component : components) {
-                    if (component.inBounds(m)){
-                        component.onClick(e);
-                    }
-                }
-            }
-
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                // Optional zoom with wheel
-                double factor = 1.1;
-                if (e.getPreciseWheelRotation() > 0) factor = 1 / factor;
-                setScale(scale * factor, e.getPoint());
-            }
-        };
+        MouseAdapter mouseAdapter = new MouseHandler();
 
         addMouseListener(mouseAdapter);
         addMouseMotionListener(mouseAdapter);
@@ -138,26 +81,22 @@ public class PlayGround extends JComponent {
 
     public void removeComponent(Component component){
         this.components.remove(component);
-        component.removeAll();
     }
 
-    public void addInvokeLater(Runnable runnable, long millis){
-        LaterInvokers laterInvokers = new LaterInvokers(runnable, true, millis);
-        this.invokeLater.add(laterInvokers);
-
-        new Thread(laterInvokers).start();
+    public List<Component> getAllComponents() {
+        return components;
     }
 
-    public void resetStates(){
-        for (Component component : this.components) {
-            component.resetState();
-        }
+    public Connector getCurrentlyConnecting() {
+        return currentlyConnecting;
+    }
 
-        for (LaterInvokers laterInvokers : this.invokeLater) {
-            laterInvokers.canStillRun = false;
-        }
+    public void setCurrentlyConnecting(Connector currentlyConnecting) {
+        this.currentlyConnecting = currentlyConnecting;
+    }
 
-        repaint();
+    public Point getMousePos() {
+        return mousePos;
     }
 
     @Override
@@ -172,33 +111,112 @@ public class PlayGround extends JComponent {
             component.draw(g2);
         }
 
+        if (this.getCurrentlyConnecting() != null){
+            this.currentlyConnecting.drawToMouse(g2, this.mousePos.x, this.mousePos.y);
+        }
+
+        this.contextMenu.draw(g2);
+
         g2.dispose();
     }
 
-    private class LaterInvokers implements Runnable{
-        private final Runnable runnable;
-        private boolean canStillRun;
-        long millisToWait;
+    private class MouseHandler extends MouseAdapter{
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (SwingUtilities.isLeftMouseButton(e)) {
+                dragStart = e.getPoint();
 
-        public LaterInvokers(Runnable runnable, boolean canStillRun, long millisToWait) {
-            this.runnable = runnable;
-            this.canStillRun = canStillRun;
-            this.millisToWait = millisToWait;
+                Point m = new Point(e.getPoint());
+                adjustPoint(m);
+
+                for (Component component : components) {
+                    if (component.inBounds(m)){
+                        draggingComponent = component;
+                    }
+                }
+            }
         }
 
         @Override
-        public void run() {
-            try {
-                Thread.sleep(millisToWait);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        public void mouseReleased(MouseEvent e) {
+            dragStart = null;
+            draggingComponent = null;
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (dragStart != null) {
+                Point dragEnd = e.getPoint();
+
+                if (draggingComponent != null){
+                    Point de = new Point(dragEnd);
+                    adjustPoint(de);
+                    adjustPoint(dragStart);
+
+                    draggingComponent.onDrag(de.x - dragStart.x, de.y - dragStart.y);
+                }else{
+                    offsetX += dragEnd.x - dragStart.x / Math.min(scale * 2, 1);
+                    offsetY += dragEnd.y - dragStart.y / Math.min(scale * 2, 1);
+                }
+
+                dragStart = dragEnd;
+                repaint();
+            }else{
+                mouseMoved(e);
+                mouseClicked(e);
+            }
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            Point m = new Point(e.getPoint());
+            adjustPoint(m);
+
+            if (e.getButton() == 2){
+                new NodeTree().eval(((NodeComponent) getAllComponents().getFirst()).getCodeNode());
             }
 
-            if (canStillRun){
-                runnable.run();
+            if (contextMenu.isVisible()){
+                if (contextMenu.inBounds(m)){
+                    contextMenu.onClick(e, m);
+                }else{
+                    contextMenu.hide();
+                }
+
+                repaint();
+                return;
             }
 
-            PlayGround.this.repaint();
+            boolean anyComponentInBound = false;
+
+            for (Component component : components) {
+                if (component.inBounds(m)){
+                    component.onClick(e, m);
+                    anyComponentInBound = true;
+                    break;
+                }
+            }
+
+            if (!anyComponentInBound){
+                setCurrentlyConnecting(null);
+                repaint();
+            }
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            if(getCurrentlyConnecting() != null) repaint();
+
+            mousePos = e.getPoint();
+            adjustPoint(mousePos);
+        }
+
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e) {
+            // Optional zoom with wheel
+            double factor = 1.1;
+            if (e.getPreciseWheelRotation() > 0) factor = 1 / factor;
+            setScale(scale * factor, e.getPoint());
         }
     }
 }
