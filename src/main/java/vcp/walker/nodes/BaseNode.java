@@ -9,11 +9,9 @@ public class BaseNode implements CodeNode {
     protected String[] directInVal;
     protected String[] inVarNames;
     protected String outVarName;
-    protected CodeNode inNode;
 
     public BaseNode(){
         this.outNodes = new CodeNode[getOutConnections()];
-        this.inNode = null;
 
         this.inVarNames = new String[this.dataInputs()];
         this.directInVal = new String[this.dataInputs()];
@@ -28,19 +26,8 @@ public class BaseNode implements CodeNode {
     }
 
     @Override
-    public CodeNode inNode() {
-        if (!hasInConnection()) return null;
-
-        return this.inNode;
-    }
-
-    @Override
     public String getLabelForOut(int i) {
         return "Then ";
-    }
-
-    public void addInNode(CodeNode codeNode){
-        this.inNode = codeNode;
     }
 
     public void addOutNode(CodeNode codeNode, int conn){
@@ -120,5 +107,10 @@ public class BaseNode implements CodeNode {
     @Override
     public String toString() {
         return getClass().getSimpleName().toLowerCase().replace("node", "");
+    }
+
+    @Override
+    public boolean canUseSuperTypeClass() {
+        return false;
     }
 }

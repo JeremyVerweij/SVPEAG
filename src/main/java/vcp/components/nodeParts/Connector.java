@@ -96,15 +96,10 @@ public class Connector {
     public void setConnected(NodeComponent connected) {
         ((BaseNode) this.owner.getCodeNode()).addOutNode(null, this.connection);
 
-        if (this.connected != null){
-            ((BaseNode) this.connected.getCodeNode()).addInNode(null);
-        }
-
         this.connected = connected;
 
         if (connected != null) {
             ((BaseNode) this.owner.getCodeNode()).addOutNode(connected.getCodeNode(), this.connection);
-            ((BaseNode) connected.getCodeNode()).addInNode(this.owner.getCodeNode());
         }
     }
 

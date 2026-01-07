@@ -3,6 +3,9 @@ package vcp.walker.executor;
 import vcp.App;
 import vcp.walker.CodeNode;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class CodeWalker {
     private final INodeEvaluator nodeEvaluator;
     private final App app;
@@ -15,7 +18,9 @@ public class CodeWalker {
     public void eval(CodeNode codeNode){
         StringBuilder builder = new StringBuilder();
 
-        this.nodeEvaluator.eval(builder, 0, codeNode);
+        HashSet<String> set = new HashSet<>();
+        set.add("");
+        this.nodeEvaluator.eval(builder, 0, codeNode, set);
 
         System.out.println(builder.toString());
     }
@@ -26,6 +31,6 @@ public class CodeWalker {
          * @param indentation current indent
          * @param node current node
          */
-        void eval(StringBuilder output, int indentation, CodeNode node);
+        void eval(StringBuilder output, int indentation, CodeNode node, Set<String> definedVars);
     }
 }

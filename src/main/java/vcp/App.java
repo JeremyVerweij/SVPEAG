@@ -43,7 +43,7 @@ public class App {
         this.nodeColors = new NodeColors();
         this.variables = new HashMap<>();
 
-        this.codeWalker = new CodeWalker((a, b, c) -> {}, this);
+        this.codeWalker = new CodeWalker((a, b, c, d) -> {}, this);
 
         this.commandLineWindow.setVisible(checkOption(options, SHOW_COMMAND_LINE));
 
@@ -77,8 +77,11 @@ public class App {
         return this.variables.get(name).equals(dataType);
     }
 
-    public String[] getVarsForType(DataType dataType){
-        return this.variables.keySet().stream().filter((e) -> existVar(dataType, e)).toArray(String[]::new);
+    public String[] getVarsForType(DataType dataType, boolean allowSuperTypes){
+        return this.variables.keySet().stream().filter((e) -> existVar(dataType, e)).filter((e) -> {
+            if (allowSuperTypes) return true;
+            return dataType.getClass() == this.variables.get(e).getClass();
+        }).toArray(String[]::new);
     }
 
     public CommandLineWindow getCommandLineWindow() {
@@ -108,5 +111,9 @@ public class App {
 
     public void removeVar(String removeVar) {
         this.variables.remove(removeVar);
+    }
+
+    public Map<String, DataType> getVars() {
+        return this.variables;
     }
 }

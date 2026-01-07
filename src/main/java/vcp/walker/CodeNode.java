@@ -5,7 +5,6 @@ public interface CodeNode {
     boolean hasInConnection();
 
     CodeNode[] outNodes();
-    CodeNode inNode();
 
     String getLabelForOut(int i);
 
@@ -24,4 +23,6 @@ public interface CodeNode {
 
     String inValue(int i);
     String outValue();
+
+    boolean canUseSuperTypeClass();
 }

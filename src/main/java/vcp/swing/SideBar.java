@@ -3,6 +3,7 @@ package vcp.swing;
 import vcp.App;
 import vcp.components.NodeComponent;
 import vcp.walker.CodeNode;
+import vcp.walker.LoadAndSaveState;
 
 import javax.swing.*;
 import java.awt.*;
@@ -101,6 +102,8 @@ public class SideBar extends JScrollPane {
     }
 
     private void onGenerateClick(ActionEvent actionEvent) {
+        new LoadAndSaveState(this.app).save("");
+
         for (vcp.components.Component component : this.app.getPlayGround().getAllComponents()) {
             if (component instanceof NodeComponent nodeComponent){
                 if(!nodeComponent.getCodeNode().hasInConnection()){

@@ -85,7 +85,7 @@ public class ContextMenuComponent extends Component{
             Map.Entry<String, Boolean> popup = createPopup(component.getDataInDisplays()[i].getDirectValue(),
                     component.getDataInDisplays()[i].getVarName(),
                     component.codeNode.getDataInTypes()[i],
-                    component.codeNode.getLabelForData(i, false), true);
+                    component.codeNode.getLabelForData(i, false), true, component.codeNode.canUseSuperTypeClass());
 
             if (popup == null) return;
 
@@ -108,7 +108,7 @@ public class ContextMenuComponent extends Component{
             Map.Entry<String, Boolean> popup = createPopup(null,
                     component.getDataOutDisplay().getVarName(),
                     component.codeNode.getDataOutTypes(),
-                    component.codeNode.getLabelForData(0 , true), false);
+                    component.codeNode.getLabelForData(0 , true), false, component.codeNode.canUseSuperTypeClass());
 
             if (popup == null) return;
 
@@ -123,7 +123,7 @@ public class ContextMenuComponent extends Component{
     private final static String CREATE_NEW_VAR_STRING = "---Create New Variable---";
 
     @SuppressWarnings("deprecation")
-    private Map.Entry<String, Boolean> createPopup(String initialValue, String varName, DataType dataType, String label, boolean allowDirect){
+    private Map.Entry<String, Boolean> createPopup(String initialValue, String varName, DataType dataType, String label, boolean allowDirect, boolean allowSuperTypes){
         JOptionPane pane = new JOptionPane();
 
         pane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
@@ -133,7 +133,7 @@ public class ContextMenuComponent extends Component{
             pane.setInitialSelectionValue(initialValue);
         }
 
-        JComboBox<String> comboBox = new JComboBox<>(app.getVarsForType(dataType));
+        JComboBox<String> comboBox = new JComboBox<>(app.getVarsForType(dataType, allowSuperTypes));
         if(varName != null) if(app.existVar(dataType, varName)) comboBox.setSelectedItem(varName);
         JCheckBox checkBox = new JCheckBox("Use var instead of direct value: ", varName != null);
 
