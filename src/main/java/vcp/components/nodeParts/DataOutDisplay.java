@@ -6,22 +6,19 @@ import java.awt.*;
 
 import static vcp.components.NodeComponent.DATA_IN_AND_OUT_WIDTH;
 
-public class DataInDisplay {
+public class DataOutDisplay {
     private final int xOffset, yOffset;
     private final String label;
     private final NodeComponent owner;
-    private final int dataIn;
-    private String directValue = "null";
     private String varName = null;
 
     private int textWidth = -1;
 
-    public DataInDisplay(int dataIn, NodeComponent owner, int xOffset, int yOffset) {
-        this.dataIn = dataIn;
+    public DataOutDisplay(NodeComponent owner, int xOffset, int yOffset) {
         this.owner = owner;
         this.xOffset = xOffset;
         this.yOffset = yOffset;
-        this.label = owner.getCodeNode().getLabelForData(dataIn, false) + ":";
+        this.label = owner.getCodeNode().getLabelForData(0, true) + ":";
     }
 
     private void calcTextWidth(FontMetrics fontMetrics){
@@ -33,7 +30,7 @@ public class DataInDisplay {
     private String getValue(){
         if (varName != null) return varName;
 
-        return directValue;
+        return "";
     }
 
     private void setColor(Graphics2D g2, boolean text){
@@ -67,15 +64,7 @@ public class DataInDisplay {
     }
 
     public void setVarName(String varName) {
-        this.owner.getCodeNode().inVarName()[this.dataIn] = this.varName = varName;
-    }
-
-    public void setDirectValue(String directValue) {
-        this.owner.getCodeNode().directInVal()[this.dataIn] = this.directValue = directValue;
-    }
-
-    public String getDirectValue() {
-        return directValue;
+        this.owner.getCodeNode().setOutVarName(this.varName = varName);
     }
 
     public String getVarName() {

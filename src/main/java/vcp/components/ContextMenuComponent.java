@@ -1,10 +1,15 @@
 package vcp.components;
 
 import vcp.App;
+import vcp.walker.DataType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class ContextMenuComponent extends Component{
     private boolean visible = false;
@@ -20,13 +25,19 @@ public class ContextMenuComponent extends Component{
     public void draw(Graphics2D g2) {
         if(visible && component != null){
             int inItems = component.codeNode.dataInputs();
-            int outItems = component.codeNode.dataOutputs();
+            int outItems = component.codeNode.hasDataOutput() ? 1 : 0;
 
-            height = (inItems + outItems + 2) * 20;
+            height = (inItems + outItems + 3) * 20;
 
             super.draw(g2);
 
             int y = this.y + 20;
+
+            g2.setColor(Color.RED);
+            g2.drawString("Delete", x + 2, y - 6);
+            g2.setColor(foreground);
+            g2.drawLine(x, y, x + width, y);
+            y += 20;
 
             g2.setColor(Color.BLUE);
             g2.drawString("Data IN", x + 2, y - 6);
@@ -47,6 +58,10 @@ public class ContextMenuComponent extends Component{
             g2.drawLine(x, y, x + width, y);
             y += 20;
 
+            g2.drawString("Edit '" + component.codeNode.getLabelForData(0, true) + "'", x + 2, y - 6);
+            g2.drawLine(x, y, x + width, y);
+
+            y += 20;
         }
     }
 
@@ -55,40 +70,116 @@ public class ContextMenuComponent extends Component{
         int y = mouse.y - this.y;
         int index = y / 20;
 
-        if (index == 0 || index == component.codeNode.dataInputs() + 1)
-            return;
+        if (index == 0){
+            if(JOptionPane.showConfirmDialog(this.getPlayground(), "Are you sure you want to delete?") == 0){
+                this.component.delete();
+                this.getPlayground().removeComponent(this.component);
+                hide();
+            }
+        } else if(index ==1 || index == component.codeNode.dataInputs() + 2){
 
-        if (index <= component.codeNode.dataInputs()){
+        } else if (index < component.codeNode.dataInputs() + 2){
             //inputs
-            int i = index - 1;
+            int i = index - 2;
 
-            JOptionPane pane = new JOptionPane();
+            Map.Entry<String, Boolean> popup = createPopup(component.getDataInDisplays()[i].getDirectValue(),
+                    component.getDataInDisplays()[i].getVarName(),
+                    component.codeNode.getDataInTypes()[i],
+                    component.codeNode.getLabelForData(i, false), true);
 
-            String var = component.getDataInDisplays()[i].getVarName();
-            pane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
+            if (popup == null) return;
+
+            if (!popup.getValue()){
+                if (component.getDataInDisplays()[i].getVarName() != null && !Objects.equals(component.getDataInDisplays()[i].getVarName(), popup.getKey())) {
+                    component.removeVar(component.getDataInDisplays()[i].getVarName());
+                }
+
+                component.getDataInDisplays()[i].setVarName(popup.getKey());
+            }else{
+                if (component.getDataInDisplays()[i].getVarName() != null) {
+                    component.removeVar(component.getDataInDisplays()[i].getVarName());
+                }
+
+                component.getDataInDisplays()[i].setVarName(null);
+                component.getDataInDisplays()[i].setDirectValue(popup.getKey());
+            }
+        } else {
+            //output
+            Map.Entry<String, Boolean> popup = createPopup(null,
+                    component.getDataOutDisplay().getVarName(),
+                    component.codeNode.getDataOutTypes(),
+                    component.codeNode.getLabelForData(0 , true), false);
+
+            if (popup == null) return;
+
+            if (component.getDataOutDisplay().getVarName() != null && !Objects.equals(component.getDataOutDisplay().getVarName(), popup.getKey())) {
+                component.removeVar(component.getDataOutDisplay().getVarName());
+            }
+
+            component.getDataOutDisplay().setVarName(popup.getKey());
+        }
+    }
+
+    private final static String CREATE_NEW_VAR_STRING = "---Create New Variable---";
+
+    @SuppressWarnings("deprecation")
+    private Map.Entry<String, Boolean> createPopup(String initialValue, String varName, DataType dataType, String label, boolean allowDirect){
+        JOptionPane pane = new JOptionPane();
+
+        pane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
+
+        if (allowDirect){
             pane.setWantsInput(true);
-            pane.setInitialSelectionValue(component.getDataInDisplays()[i].getDirectValue());
+            pane.setInitialSelectionValue(initialValue);
+        }
 
-            JComboBox<Object> comboBox = new JComboBox<>(app.getVarsForType(component.codeNode.getDataInTypes()[i]).toArray());
-            if(var != null) if(app.existVar(component.codeNode.getDataInTypes()[i], var)) comboBox.setSelectedItem(var);
-            JCheckBox checkBox = new JCheckBox("Use var instead of direct value: ", var != null);
+        JComboBox<String> comboBox = new JComboBox<>(app.getVarsForType(dataType));
+        if(varName != null) if(app.existVar(dataType, varName)) comboBox.setSelectedItem(varName);
+        JCheckBox checkBox = new JCheckBox("Use var instead of direct value: ", varName != null);
 
-            pane.add(comboBox, 1);
+        pane.add(comboBox, 1);
+
+        if (allowDirect)
             pane.add(checkBox, 2);
 
-            pane.createDialog(component.codeNode.getLabelForData(i, false)).setVisible(true);
+        //create option to create new var!!!
+        comboBox.addItem(CREATE_NEW_VAR_STRING);
+        comboBox.setSelectedItem(CREATE_NEW_VAR_STRING);
+        JTextField textField = new JTextField("new_var_name");
+        pane.add(textField, 2);
 
-            if (checkBox.isSelected()){
-                component.getDataInDisplays()[i].setVarName((String) comboBox.getSelectedItem());
+        JDialog dialog = pane.createDialog(label);
+        dialog.show();
+        dialog.dispose();
+
+        boolean direct = allowDirect && !checkBox.isSelected();
+        String rString = (String) (direct ? pane.getInputValue() : comboBox.getSelectedItem());
+
+        Object selectedValue = pane.getValue();
+
+        if(selectedValue == null)
+            return null;
+
+        if(selectedValue instanceof Integer){
+            int i = ((Integer)selectedValue).intValue();
+            if (i != 0) return null;
+        }else return null;
+
+        if (!direct && Objects.equals(rString, CREATE_NEW_VAR_STRING)){
+            String var = textField.getText();
+
+            if(var.matches("[A-Za-z][A-Za-z0-9_]*") && !app.existVar(dataType, var)){
+                //create var
+                app.createVar(dataType, var);
+                rString = var;
             }else{
-                component.getDataInDisplays()[i].setVarName(null);
-                component.getDataInDisplays()[i].setDirectValue((String) pane.getInputValue());
+                //use direct
+                direct = true;
+                rString = (String) pane.getInputValue();
             }
-        }else{
-            //outputs
-            int i = index - 2 - component.codeNode.dataInputs();
-
         }
+
+        return new AbstractMap.SimpleEntry<>(rString, direct);
     }
 
     @Override

@@ -4,11 +4,12 @@ import vcp.walker.CodeNode;
 import vcp.walker.DataType;
 
 public class BaseNode implements CodeNode {
-    private final CodeNode[] outNodes;
-    private final String[] directInVal;
-    private final String[] inVarNames;
-    private final String[] outVarNames;
-    private CodeNode inNode;
+    protected DataType[] dataTypesIn;
+    protected CodeNode[] outNodes;
+    protected String[] directInVal;
+    protected String[] inVarNames;
+    protected String outVarName;
+    protected CodeNode inNode;
 
     public BaseNode(){
         this.outNodes = new CodeNode[getOutConnections()];
@@ -16,8 +17,9 @@ public class BaseNode implements CodeNode {
 
         this.inVarNames = new String[this.dataInputs()];
         this.directInVal = new String[this.dataInputs()];
+        this.dataTypesIn = new DataType[this.dataInputs()];
 
-        this.outVarNames = new String[this.dataOutputs()];
+        this.outVarName = null;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class BaseNode implements CodeNode {
 
     @Override
     public String getLabelForOut(int i) {
-        return "OUT_" + i;
+        return "Then ";
     }
 
     public void addInNode(CodeNode codeNode){
@@ -47,12 +49,12 @@ public class BaseNode implements CodeNode {
 
     @Override
     public int dataInputs() {
-        return getDataInTypes().length;
+        return 0;
     }
 
     @Override
-    public int dataOutputs() {
-        return getDataOutTypes().length;
+    public boolean hasDataOutput() {
+        return getDataOutTypes() != null;
     }
 
     @Override
@@ -62,12 +64,12 @@ public class BaseNode implements CodeNode {
 
     @Override
     public DataType[] getDataInTypes() {
-        return new DataType[0];
+        return this.dataTypesIn;
     }
 
     @Override
-    public DataType[] getDataOutTypes() {
-        return new DataType[0];
+    public DataType getDataOutTypes() {
+        return null;
     }
 
     @Override
@@ -81,8 +83,13 @@ public class BaseNode implements CodeNode {
     }
 
     @Override
-    public String[] outVarName() {
-        return this.outVarNames;
+    public String outVarName() {
+        return this.outVarName;
+    }
+
+    @Override
+    public void setOutVarName(String outVarName) {
+        this.outVarName = outVarName;
     }
 
     /**
@@ -96,6 +103,18 @@ public class BaseNode implements CodeNode {
     @Override
     public boolean hasInConnection() {
         return true;
+    }
+
+    @Override
+    public String inValue(int i) {
+        if (this.inVarNames[i] != null) return this.inVarNames[i];
+        return this.directInVal[i];
+    }
+
+    @Override
+    public String outValue() {
+        if (this.outVarName != null) return this.outVarName;
+        return "";
     }
 
     @Override

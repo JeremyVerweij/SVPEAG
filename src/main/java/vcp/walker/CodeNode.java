@@ -10,14 +10,18 @@ public interface CodeNode {
     String getLabelForOut(int i);
 
     int dataInputs();
-    int dataOutputs();
+    boolean hasDataOutput();
 
     String getLabelForData(int i, boolean out);
 
     DataType[] getDataInTypes();
-    DataType[] getDataOutTypes();
+    DataType getDataOutTypes();
 
     String[] directInVal();
     String[] inVarName();
-    String[] outVarName();
+    String outVarName();
+    void setOutVarName(String name);
+
+    String inValue(int i);
+    String outValue();
 }

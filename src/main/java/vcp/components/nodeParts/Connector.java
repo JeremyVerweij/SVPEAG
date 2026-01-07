@@ -55,9 +55,22 @@ public class Connector {
             int xO2 = this.connected.getX();
             int yO2 = this.connected.getY() + (this.connected.getHeight() / 2);
 
-            g2.drawLine(xO, yO, xO + WIDTH, yO);
-            g2.drawLine(xO + WIDTH, yO, xO2 - WIDTH, yO2);
-            g2.drawLine(xO2, yO2, xO2 - WIDTH, yO2);
+            if (xO2 < xO){
+                boolean ownUp = yO2 < yO;
+
+                int uO = ownUp ? owner.getY() - 10 : owner.getY() + owner.getHeight() + 10;
+                int uO2 = !ownUp ? connected.getY() - 10 : connected.getY() + connected.getHeight() + 10;
+
+                g2.drawLine(xO, yO, xO + WIDTH, yO);
+                g2.drawLine(xO + WIDTH, yO, xO + WIDTH, uO);
+                g2.drawLine(xO + WIDTH, uO, xO2 - WIDTH, uO2);
+                g2.drawLine(xO2, yO2, xO2 - WIDTH, yO2);
+                g2.drawLine(xO2 - WIDTH, yO2, xO2 - WIDTH, uO2);
+            }else{
+                g2.drawLine(xO, yO, xO + WIDTH, yO);
+                g2.drawLine(xO + WIDTH, yO, xO2 - WIDTH, yO2);
+                g2.drawLine(xO2, yO2, xO2 - WIDTH, yO2);
+            }
 
             g2.setStroke(stroke);
         }
@@ -93,5 +106,9 @@ public class Connector {
             ((BaseNode) this.owner.getCodeNode()).addOutNode(connected.getCodeNode(), this.connection);
             ((BaseNode) connected.getCodeNode()).addInNode(this.owner.getCodeNode());
         }
+    }
+
+    public NodeComponent getConnected() {
+        return connected;
     }
 }

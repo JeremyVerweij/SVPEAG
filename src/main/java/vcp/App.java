@@ -3,11 +3,12 @@ package vcp;
 import vcp.components.*;
 import vcp.swing.CommandLineWindow;
 import vcp.swing.PlayGround;
+import vcp.swing.SideBar;
 import vcp.swing.Window;
+import vcp.walker.CodeNode;
 import vcp.walker.DataType;
 import vcp.walker.NodeColors;
-import vcp.walker.nodes.PrintNode;
-import vcp.walker.nodes.RunNode;
+import vcp.walker.executor.CodeWalker;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -26,60 +27,58 @@ public class App {
     private final CommandLineWindow commandLineWindow;
     private final Window mainWindow;
     private final PlayGround playGround;
+    private final SideBar sideBar;
     private final NodeColors nodeColors;
     private final ContextMenuComponent contextMenu;
-    private final Map<DataType, List<String>> variables;
+    private final Map<String, DataType> variables;
+
+    private CodeWalker codeWalker;
 
     public App(String name, int options){
         this.commandLineWindow = new CommandLineWindow();
         this.mainWindow = new Window(name);
         this.contextMenu = new ContextMenuComponent(this, 0 , 0);
         this.playGround = new PlayGround(this.contextMenu);
+        this.sideBar = new SideBar(this);
         this.nodeColors = new NodeColors();
         this.variables = new HashMap<>();
+
+        this.codeWalker = new CodeWalker((a, b, c) -> {}, this);
 
         this.commandLineWindow.setVisible(checkOption(options, SHOW_COMMAND_LINE));
 
         this.mainWindow.getContentPane().setLayout(new BorderLayout());
-        this.mainWindow.getContentPane().add(this.playGround);
-
-        this.initNodeColors();
-        this.testPlayground();
+        this.mainWindow.getContentPane().add(this.sideBar, BorderLayout.WEST);
+        this.mainWindow.getContentPane().add(this.playGround, BorderLayout.CENTER);
     }
 
-    private void initNodeColors(){
-        this.nodeColors.addColor(RunNode.class, Color.GREEN);
-        this.nodeColors.addColor(PrintNode.class, Color.RED);
-    }
-
-    private void testPlayground(){
-        createVar(new DataType.StringType(), "testString");
-
-        this.playGround.addComponent(new NodeComponent(this, 0, 0, new RunNode()));
-        this.playGround.addComponent(new NodeComponent(this, 100, 0, new PrintNode()));
+    public void setCodeWalker(CodeWalker.INodeEvaluator nodeEvaluator) {
+        this.codeWalker = new CodeWalker(nodeEvaluator, this);
     }
 
     public void requestContextMenu(NodeComponent nodeComponent){
         this.contextMenu.show(nodeComponent);
     }
 
-    public void createVar(DataType dataType, String name){
-        if (!this.variables.containsKey(dataType))
-            this.variables.put(dataType, new ArrayList<>());
+    public void addNode(Class<? extends CodeNode> node, Color color){
+        this.nodeColors.addColor(node, color);
+    }
 
-        this.variables.get(dataType).add(name);
+    public void addCategory(Color color, String name){
+        this.sideBar.getColorCategories().put(color, name);
+    }
+
+    public void createVar(DataType dataType, String name){
+        this.variables.put(name, dataType);
     }
 
     public boolean existVar(DataType dataType, String name){
-        if (!this.variables.containsKey(dataType)) return false;
-        return this.variables.get(dataType).contains(name);
+        if (!this.variables.containsKey(name)) return false;
+        return this.variables.get(name).equals(dataType);
     }
 
-    public List<String> getVarsForType(DataType dataType){
-        if (!this.variables.containsKey(dataType))
-            this.variables.put(dataType, new ArrayList<>());
-
-        return this.variables.get(dataType);
+    public String[] getVarsForType(DataType dataType){
+        return this.variables.keySet().stream().filter((e) -> existVar(dataType, e)).toArray(String[]::new);
     }
 
     public CommandLineWindow getCommandLineWindow() {
@@ -96,5 +95,18 @@ public class App {
 
     public NodeColors getNodeColors() {
         return nodeColors;
+    }
+
+    public CodeWalker getCodeWalker() {
+        return codeWalker;
+    }
+
+    public void start(){
+        this.sideBar.reloadComponents();
+        this.playGround.repaint();
+    }
+
+    public void removeVar(String removeVar) {
+        this.variables.remove(removeVar);
     }
 }

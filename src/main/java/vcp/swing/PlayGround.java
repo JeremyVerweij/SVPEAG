@@ -1,10 +1,8 @@
 package vcp.swing;
 
 import vcp.components.Component;
-import vcp.components.NodeComponent;
-import vcp.components.nodeParts.Connector;
 import vcp.components.ContextMenuComponent;
-import vcp.walker.NodeTree;
+import vcp.components.nodeParts.Connector;
 
 import javax.swing.*;
 import java.awt.*;
@@ -120,6 +118,12 @@ public class PlayGround extends JComponent {
         g2.dispose();
     }
 
+    public Point getWorldCenter(){
+        Point center = new Point(this.getWidth() / 2, this.getHeight() / 2);
+        adjustPoint(center);
+        return center;
+    }
+
     private class MouseHandler extends MouseAdapter{
         @Override
         public void mousePressed(MouseEvent e) {
@@ -171,10 +175,6 @@ public class PlayGround extends JComponent {
         public void mouseClicked(MouseEvent e) {
             Point m = new Point(e.getPoint());
             adjustPoint(m);
-
-            if (e.getButton() == 2){
-                new NodeTree().eval(((NodeComponent) getAllComponents().getFirst()).getCodeNode());
-            }
 
             if (contextMenu.isVisible()){
                 if (contextMenu.inBounds(m)){
