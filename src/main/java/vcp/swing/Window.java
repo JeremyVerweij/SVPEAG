@@ -9,7 +9,6 @@ public class Window extends JFrame {
         setSize(width, height);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationByPlatform(true);
-        setVisible(true);
     }
 
     public Window(String name){

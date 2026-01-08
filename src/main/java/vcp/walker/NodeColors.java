@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class NodeColors {
     private final Map<Class<? extends CodeNode>, Color> colorMap;
@@ -32,5 +33,9 @@ public class NodeColors {
                 .filter((e) -> this.colorMap.get(e).equals(color))
                 .sorted(Comparator.comparing(Class::getSimpleName))
                 .toArray(Class[]::new);
+    }
+
+    public Set<Class<? extends CodeNode>> getAllNodes(){
+        return this.colorMap.keySet();
     }
 }

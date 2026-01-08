@@ -1,7 +1,9 @@
 package vcp.swing;
 
+import vcp.App;
 import vcp.components.Component;
 import vcp.components.ContextMenuComponent;
+import vcp.components.NodeComponent;
 import vcp.components.nodeParts.Connector;
 
 import javax.swing.*;
@@ -15,6 +17,8 @@ import java.util.List;
 public class PlayGround extends JComponent {
     private static final double minScale = 0.5, maxScale = 3.0;
 
+    private final App app;
+
     private double scale = 1.0; // zoom
     private double offsetX = 0, offsetY = 0; //pan
 
@@ -26,9 +30,10 @@ public class PlayGround extends JComponent {
     private final ContextMenuComponent contextMenu;
     private final List<Component> components;
 
-    public PlayGround(ContextMenuComponent contextMenu){
+    public PlayGround(ContextMenuComponent contextMenu, App app){
         this.components = new ArrayList<>();
         this.contextMenu = contextMenu;
+        this.app = app;
 
         setLayout(null);
         setOpaque(true);
@@ -75,10 +80,20 @@ public class PlayGround extends JComponent {
 
     public void addComponent(Component component){
         this.components.add(component);
+
+        if (component instanceof NodeComponent nodeComponent){
+            if (!nodeComponent.getCodeNode().hasInConnection())
+                app.getStartPoints().add(nodeComponent);
+        }
     }
 
     public void removeComponent(Component component){
         this.components.remove(component);
+
+        if (component instanceof NodeComponent nodeComponent){
+            if (!nodeComponent.getCodeNode().hasInConnection())
+                app.getStartPoints().remove(nodeComponent);
+        }
     }
 
     public List<Component> getAllComponents() {

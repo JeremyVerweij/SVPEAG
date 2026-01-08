@@ -15,14 +15,14 @@ public class CodeWalker {
         this.app = app;
     }
 
-    public void eval(CodeNode codeNode){
+    public String eval(CodeNode codeNode){
         StringBuilder builder = new StringBuilder();
 
         HashSet<String> set = new HashSet<>();
         set.add("");
         this.nodeEvaluator.eval(builder, 0, codeNode, set);
 
-        System.out.println(builder.toString());
+        return (builder.toString());
     }
 
     public interface INodeEvaluator{

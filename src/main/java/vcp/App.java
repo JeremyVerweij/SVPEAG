@@ -1,12 +1,14 @@
 package vcp;
 
-import vcp.components.*;
+import vcp.components.ContextMenuComponent;
+import vcp.components.NodeComponent;
 import vcp.swing.CommandLineWindow;
 import vcp.swing.PlayGround;
 import vcp.swing.SideBar;
 import vcp.swing.Window;
 import vcp.walker.CodeNode;
 import vcp.walker.DataType;
+import vcp.walker.LoadAndSaveState;
 import vcp.walker.NodeColors;
 import vcp.walker.executor.CodeWalker;
 
@@ -18,38 +20,45 @@ import java.util.Map;
 
 public class App {
     public static final int NO_OPTIONS = 0;
-    public static final int SHOW_COMMAND_LINE = 0b1;
 
     private static boolean checkOption(int options, int option){
         return (options & option) != 0;
     }
 
-    private final CommandLineWindow commandLineWindow;
     private final Window mainWindow;
     private final PlayGround playGround;
     private final SideBar sideBar;
-    private final NodeColors nodeColors;
+    private NodeColors nodeColors;
     private final ContextMenuComponent contextMenu;
     private final Map<String, DataType> variables;
+    private final LoadAndSaveState loadAndSaveState;
+    private final List<NodeComponent> startPoints;
+    private final int options;
 
     private CodeWalker codeWalker;
 
     public App(String name, int options){
-        this.commandLineWindow = new CommandLineWindow();
+        this.options = options;
         this.mainWindow = new Window(name);
         this.contextMenu = new ContextMenuComponent(this, 0 , 0);
-        this.playGround = new PlayGround(this.contextMenu);
+        this.playGround = new PlayGround(this.contextMenu, this);
         this.sideBar = new SideBar(this);
         this.nodeColors = new NodeColors();
         this.variables = new HashMap<>();
+        this.loadAndSaveState = new LoadAndSaveState(this);
+        this.startPoints = new ArrayList<>();
 
         this.codeWalker = new CodeWalker((a, b, c, d) -> {}, this);
-
-        this.commandLineWindow.setVisible(checkOption(options, SHOW_COMMAND_LINE));
 
         this.mainWindow.getContentPane().setLayout(new BorderLayout());
         this.mainWindow.getContentPane().add(this.sideBar, BorderLayout.WEST);
         this.mainWindow.getContentPane().add(this.playGround, BorderLayout.CENTER);
+    }
+
+    public App(String name, App app){
+        this(name, app.options);
+        this.codeWalker = app.codeWalker;
+        this.nodeColors = app.nodeColors;
     }
 
     public void setCodeWalker(CodeWalker.INodeEvaluator nodeEvaluator) {
@@ -84,10 +93,6 @@ public class App {
         }).toArray(String[]::new);
     }
 
-    public CommandLineWindow getCommandLineWindow() {
-        return commandLineWindow;
-    }
-
     public Window getMainWindow() {
         return mainWindow;
     }
@@ -107,10 +112,32 @@ public class App {
     public void start(){
         this.sideBar.reloadComponents();
         this.playGround.repaint();
+        this.mainWindow.setVisible(true);
     }
 
     public void removeVar(String removeVar) {
         this.variables.remove(removeVar);
+    }
+
+    public String generate(){
+        StringBuilder builder = new StringBuilder();
+        for (NodeComponent startPoint : this.startPoints) {
+            builder.append(this.codeWalker.eval(startPoint.getCodeNode())).append("\n");
+        }
+
+        return builder.toString();
+    }
+
+    public void save(String path){
+        this.loadAndSaveState.save(path);
+    }
+
+    public void load(String path){
+        this.loadAndSaveState.load(path);
+    }
+
+    public List<NodeComponent> getStartPoints() {
+        return startPoints;
     }
 
     public Map<String, DataType> getVars() {

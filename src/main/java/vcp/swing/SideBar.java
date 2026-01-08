@@ -34,7 +34,7 @@ public class SideBar extends JScrollPane {
         content.removeAll();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
-        content.add(generateButton());
+//        content.add(generateButton());
 
         content.add(Box.createVerticalStrut(10));
 
@@ -102,7 +102,7 @@ public class SideBar extends JScrollPane {
     }
 
     private void onGenerateClick(ActionEvent actionEvent) {
-        new LoadAndSaveState(this.app).save("");
+        new LoadAndSaveState(this.app).save("P:\\test.coding_save");
 
         for (vcp.components.Component component : this.app.getPlayGround().getAllComponents()) {
             if (component instanceof NodeComponent nodeComponent){

@@ -231,6 +231,10 @@ public class NodeComponent extends Component{
         return height;
     }
 
+    public Connector[] getConnectors() {
+        return connectors;
+    }
+
     public DataInDisplay[] getDataInDisplays() {
         return dataInDisplays;
     }
