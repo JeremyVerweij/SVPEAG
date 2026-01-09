@@ -1,6 +1,7 @@
 package io.github.jeremyverweij.vcp;
 
 import io.github.jeremyverweij.vcp.walker.CodeNode;
+import io.github.jeremyverweij.vcp.walker.DataType;
 import io.github.jeremyverweij.vcp.walker.nodes.MathNodes;
 import io.github.jeremyverweij.vcp.walker.nodes.RunNode;
 import io.github.jeremyverweij.vcp.walker.nodes.VarNodes;
@@ -17,6 +18,9 @@ public class Main {
         app.setCodeWalker(Main::walkNode);
 
         app.addDefaultNodes();
+        app.addConstant("TEST", new DataType.BooleanType());
+
+        System.out.println(app.getVars().get("${TEST}"));
 
         app.start();
     }

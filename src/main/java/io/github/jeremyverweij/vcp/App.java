@@ -27,6 +27,7 @@ public class App {
     private final Map<String, DataType> variables;
     private final LoadAndSaveState loadAndSaveState;
     private final List<NodeComponent> startPoints;
+    private final List<String> constants;
 
     private CodeWalker codeWalker;
 
@@ -39,8 +40,9 @@ public class App {
         this.nodeColors = new NodeColors();
         this.loadAndSaveState = new LoadAndSaveState(this);
         this.startPoints = new ArrayList<>();
+        this.constants = new ArrayList<>();
 
-        this.codeWalker = new CodeWalker((a, b, c, d) -> {}, this);
+        this.codeWalker = new CodeWalker((a, b, c, d) -> {}, e -> e, this);
 
         this.mainWindow.getContentPane().setLayout(new BorderLayout());
         this.mainWindow.getContentPane().add(this.sideBar, BorderLayout.WEST);
@@ -54,7 +56,11 @@ public class App {
     }
 
     public void setCodeWalker(CodeWalker.INodeEvaluator nodeEvaluator) {
-        this.codeWalker = new CodeWalker(nodeEvaluator, this);
+        setCodeWalker(nodeEvaluator, e -> e);
+    }
+
+    public void setCodeWalker(CodeWalker.INodeEvaluator nodeEvaluator, CodeWalker.INodePostProcessor nodePostProcessor) {
+        this.codeWalker = new CodeWalker(nodeEvaluator, nodePostProcessor, this);
     }
 
     public void requestContextMenu(NodeComponent nodeComponent){
@@ -71,7 +77,9 @@ public class App {
 
     public void createVar(DataType dataType, String name){
         this.variables.put(name, dataType);
-        this.sideBar.addVar(name);
+
+        if (!name.startsWith("${"))
+            this.sideBar.addVar(name);
     }
 
     public void removeVar(String removeVar) {
@@ -83,11 +91,16 @@ public class App {
         return this.variables.containsKey(name);
     }
 
-    public String[] getVarsForType(DataType dataType, boolean allowSuperTypes){
-        return this.variables.keySet().stream().filter(this::existVar).filter((e) -> {
-            if (allowSuperTypes) return true;
-            return dataType.getClass() == this.variables.get(e).getClass();
-        }).toArray(String[]::new);
+    public String[] getVarsForType(DataType dataType, boolean allowSuperTypes, boolean allowDirect){
+        return this.variables.keySet()
+                .stream()
+                .filter(this::existVar)
+                .filter(e -> allowDirect == e.startsWith("${"))
+                .filter((e) -> {
+                    if (allowSuperTypes) return dataType.getClass().isAssignableFrom(this.variables.get(e).getClass());
+                    return dataType.getClass() == this.variables.get(e).getClass();
+                })
+                .toArray(String[]::new);
     }
 
     public Window getMainWindow() {
@@ -136,6 +149,11 @@ public class App {
 
     public Map<String, DataType> getVars() {
         return this.variables;
+    }
+
+    public void addConstant(String name, DataType type){
+        this.variables.put("${" + name + "}", type);
+        this.constants.add(name);
     }
 
     public void addDefaultNodes(){

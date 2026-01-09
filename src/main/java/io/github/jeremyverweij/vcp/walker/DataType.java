@@ -13,6 +13,7 @@ public class DataType {
 
     public static class CharType extends DataType{}
     public static class StringType extends DataType{}
+    public static class BooleanType extends DataType{}
 
     public static class NumberType extends DataType{}
     public static class IntLikeType extends NumberType{}
@@ -25,8 +26,6 @@ public class DataType {
 
     public static class FloatType extends FloatLikeType{}
     public static class DoubleType extends FloatLikeType{}
-
-    public static class BooleanType extends NumberType{}
 
     @Override
     public int hashCode() {

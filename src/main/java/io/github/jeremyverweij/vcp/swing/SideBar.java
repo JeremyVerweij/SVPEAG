@@ -66,7 +66,9 @@ public class SideBar extends JScrollPane {
         JTextField addVarName = new JTextField("var_name");
         addVarName.setMaximumSize(new Dimension(3000, 30));
 
-        JComboBox<String> addVarType = new JComboBox<>(DataType.allTypes.stream().map(Class::getSimpleName).toArray(String[]::new));
+        JComboBox<String> addVarType = new JComboBox<>(DataType.allTypes.stream()
+                .map(Class::getSimpleName)
+                .toArray(String[]::new));
         addVarType.setMaximumSize(new Dimension(3000, 30));
         addVarType.setFocusable(false);
 
@@ -78,7 +80,11 @@ public class SideBar extends JScrollPane {
 
         content.add(Box.createVerticalStrut(10));
 
-        existingVars = new JComboBox<>(app.getVars().keySet().toArray(String[]::new));
+        existingVars = new JComboBox<>(app.getVars()
+                .keySet()
+                .stream()
+                .filter((e) -> !e.startsWith("${"))
+                .toArray(String[]::new));
         existingVars.setMaximumSize(new Dimension(3000, 30));
         existingVars.setFocusable(false);
 

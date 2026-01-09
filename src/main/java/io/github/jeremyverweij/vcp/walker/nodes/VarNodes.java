@@ -8,7 +8,7 @@ public class VarNodes {
 
         public VarNode(){
             super();
-            this.dataTypesIn = new DataType[]{new DataType.NumberType()};
+            this.dataTypesIn = new DataType[]{getType()};
             this.dataOut = getType();
         }
 

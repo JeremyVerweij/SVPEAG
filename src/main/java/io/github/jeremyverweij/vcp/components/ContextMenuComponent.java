@@ -131,7 +131,7 @@ public class ContextMenuComponent extends Component{
             pane.setInitialSelectionValue(initialValue);
         }
 
-        JComboBox<String> comboBox = new JComboBox<>(app.getVarsForType(dataType, allowSuperTypes));
+        JComboBox<String> comboBox = new JComboBox<>(app.getVarsForType(dataType, allowSuperTypes, allowDirect));
         if(varName != null) if(app.existVar(varName)) comboBox.setSelectedItem(varName);
         JCheckBox checkBox = new JCheckBox("Use var instead of direct value: ", varName != null);
 
