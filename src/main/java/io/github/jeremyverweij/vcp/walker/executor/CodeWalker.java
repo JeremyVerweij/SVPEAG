@@ -4,6 +4,7 @@ import io.github.jeremyverweij.vcp.App;
 import io.github.jeremyverweij.vcp.walker.CodeNode;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class CodeWalker {
@@ -24,7 +25,7 @@ public class CodeWalker {
         set.add("");
         this.nodeEvaluator.eval(builder, 0, codeNode, set);
 
-        return nodePostProcessor.process(builder.toString());
+        return nodePostProcessor.process(builder.toString(), app.getConstants());
     }
 
     public interface INodeEvaluator{
@@ -40,6 +41,6 @@ public class CodeWalker {
     * This is handy to use when setting CONSTANTS to their correct value
      */
     public interface INodePostProcessor{
-        String process(String in);
+        String process(String in, List<String> constants);
     }
 }

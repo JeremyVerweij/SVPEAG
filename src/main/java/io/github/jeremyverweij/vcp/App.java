@@ -12,17 +12,21 @@ import io.github.jeremyverweij.vcp.walker.NodeColors;
 import io.github.jeremyverweij.vcp.walker.executor.CodeWalker;
 import io.github.jeremyverweij.vcp.walker.nodes.*;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class App {
     private final Window mainWindow;
     private final PlayGround playGround;
     private final SideBar sideBar;
-    private NodeColors nodeColors;
+    private final NodeColors nodeColors;
     private final ContextMenuComponent contextMenu;
     private final Map<String, DataType> variables;
     private final LoadAndSaveState loadAndSaveState;
@@ -31,6 +35,12 @@ public class App {
 
     private CodeWalker codeWalker;
 
+    /**
+     * Creates an app window and creates all the necessary components
+     * <br>
+     * Does not show the window yet, use {@link App#start()} to start and display the window
+     * @param name The name of the window
+     */
     public App(String name){
         this.mainWindow = new Window(name);
         this.contextMenu = new ContextMenuComponent(this, 0 , 0);
@@ -42,23 +52,80 @@ public class App {
         this.startPoints = new ArrayList<>();
         this.constants = new ArrayList<>();
 
-        this.codeWalker = new CodeWalker((a, b, c, d) -> {}, e -> e, this);
+        setCodeWalker((a, b, c, d) -> {});
 
         this.mainWindow.getContentPane().setLayout(new BorderLayout());
         this.mainWindow.getContentPane().add(this.sideBar, BorderLayout.WEST);
         this.mainWindow.getContentPane().add(this.playGround, BorderLayout.CENTER);
     }
 
-    public App(String name, App app){
-        this(name);
-        this.codeWalker = app.codeWalker;
-        this.nodeColors = app.nodeColors;
+    /**
+     * Create a callback and sets cleans up everything
+     * @param callback callback for when window is closed
+     */
+    public void addCloseCallBack(Consumer<App> callback){
+        this.mainWindow.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        this.mainWindow.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                callback.accept(App.this);
+                App.this.playGround.getAllComponents().clear();
+                mainWindow.dispose();
+            }
+        });
     }
 
+    /**
+     * Starts the app and displays the window
+     */
+    public void start(){
+        this.sideBar.reloadComponents();
+        this.playGround.repaint();
+        this.mainWindow.setVisible(true);
+    }
+
+    /**
+     * Generates the built code using the flow control system
+     * @return A string containing the generated code
+     */
+    public String generate(){
+        StringBuilder builder = new StringBuilder();
+        for (NodeComponent startPoint : this.startPoints) {
+            builder.append(this.codeWalker.eval(startPoint.getCodeNode())).append("\n");
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Save the flow control pattern to a file
+     * @param path file to be saved to
+     */
+    public void save(String path){
+        this.loadAndSaveState.save(path);
+    }
+
+    /**
+     * Load the flow control pattern from a file
+     * @param path file to load from
+     */
+    public void load(String path){
+        this.playGround.getAllComponents().clear();
+        this.loadAndSaveState.load(path);
+    }
+
+    /**
+     * @see App#setCodeWalker(CodeWalker.INodeEvaluator, CodeWalker.INodePostProcessor)
+     */
     public void setCodeWalker(CodeWalker.INodeEvaluator nodeEvaluator) {
-        setCodeWalker(nodeEvaluator, e -> e);
+        setCodeWalker(nodeEvaluator, (a, b) -> a);
     }
 
+    /**
+     * Set the node walker, the node walker is responsible for generating the source code build with the flow control app
+     * @param nodeEvaluator evaluates each node and tells what to do next, should also call the function on the next nodes
+     * @param nodePostProcessor post node processing uses the generated string to apply tweaks afterward, also gets the constats
+     */
     public void setCodeWalker(CodeWalker.INodeEvaluator nodeEvaluator, CodeWalker.INodePostProcessor nodePostProcessor) {
         this.codeWalker = new CodeWalker(nodeEvaluator, nodePostProcessor, this);
     }
@@ -73,6 +140,11 @@ public class App {
 
     public void addCategory(Color color, String name){
         this.sideBar.getColorCategories().put(color, name);
+    }
+
+    public void addConstant(String name, DataType type){
+        this.variables.put("${" + name + "}", type);
+        this.constants.add(name);
     }
 
     public void createVar(DataType dataType, String name){
@@ -119,30 +191,6 @@ public class App {
         return codeWalker;
     }
 
-    public void start(){
-        this.sideBar.reloadComponents();
-        this.playGround.repaint();
-        this.mainWindow.setVisible(true);
-    }
-
-    public String generate(){
-        StringBuilder builder = new StringBuilder();
-        for (NodeComponent startPoint : this.startPoints) {
-            builder.append(this.codeWalker.eval(startPoint.getCodeNode())).append("\n");
-        }
-
-        return builder.toString();
-    }
-
-    public void save(String path){
-        this.loadAndSaveState.save(path);
-    }
-
-    public void load(String path){
-        this.playGround.getAllComponents().clear();
-        this.loadAndSaveState.load(path);
-    }
-
     public List<NodeComponent> getStartPoints() {
         return startPoints;
     }
@@ -151,9 +199,8 @@ public class App {
         return this.variables;
     }
 
-    public void addConstant(String name, DataType type){
-        this.variables.put("${" + name + "}", type);
-        this.constants.add(name);
+    public List<String> getConstants() {
+        return this.constants;
     }
 
     public void addDefaultNodes(){
