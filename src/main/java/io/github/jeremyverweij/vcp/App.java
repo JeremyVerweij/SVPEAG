@@ -198,5 +198,7 @@ public class App {
         addCategory(Color.YELLOW, "Flow");
         addCategory(Color.ORANGE, "Variables");
         addCategory(Color.CYAN, "Logic");
+
+        addConstant("INDEX", new DataType.IntType());
     }
 }
