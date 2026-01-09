@@ -1,8 +1,8 @@
-package io.github.jeremy.vcp.walker;
+package io.github.jeremyverweij.vcp.walker;
 
-import io.github.jeremy.vcp.App;
-import io.github.jeremy.vcp.components.Component;
-import io.github.jeremy.vcp.components.NodeComponent;
+import io.github.jeremyverweij.vcp.App;
+import io.github.jeremyverweij.vcp.components.Component;
+import io.github.jeremyverweij.vcp.components.NodeComponent;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

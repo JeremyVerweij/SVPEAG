@@ -1,4 +1,4 @@
-package io.github.jeremy.vcp.walker;
+package io.github.jeremyverweij.vcp.walker;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

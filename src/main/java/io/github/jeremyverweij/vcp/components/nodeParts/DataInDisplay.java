@@ -1,24 +1,27 @@
-package io.github.jeremy.vcp.components.nodeParts;
+package io.github.jeremyverweij.vcp.components.nodeParts;
 
-import io.github.jeremy.vcp.components.NodeComponent;
+import io.github.jeremyverweij.vcp.components.NodeComponent;
 
 import java.awt.*;
 
-import static io.github.jeremy.vcp.components.NodeComponent.DATA_IN_AND_OUT_WIDTH;
+import static io.github.jeremyverweij.vcp.components.NodeComponent.DATA_IN_AND_OUT_WIDTH;
 
-public class DataOutDisplay {
+public class DataInDisplay {
     private final int xOffset, yOffset;
     private final String label;
     private final NodeComponent owner;
+    private final int dataIn;
+    private String directValue = "null";
     private String varName = null;
 
     private int textWidth = -1;
 
-    public DataOutDisplay(NodeComponent owner, int xOffset, int yOffset) {
+    public DataInDisplay(int dataIn, NodeComponent owner, int xOffset, int yOffset) {
+        this.dataIn = dataIn;
         this.owner = owner;
         this.xOffset = xOffset;
         this.yOffset = yOffset;
-        this.label = owner.getCodeNode().getLabelForData(0, true) + ":";
+        this.label = owner.getCodeNode().getLabelForData(dataIn, false) + ":";
     }
 
     private void calcTextWidth(FontMetrics fontMetrics){
@@ -30,7 +33,7 @@ public class DataOutDisplay {
     private String getValue(){
         if (varName != null) return varName;
 
-        return "";
+        return directValue;
     }
 
     private void setColor(Graphics2D g2, boolean text){
@@ -64,7 +67,15 @@ public class DataOutDisplay {
     }
 
     public void setVarName(String varName) {
-        this.owner.getCodeNode().setOutVarName(this.varName = varName);
+        this.owner.getCodeNode().inVarName()[this.dataIn] = this.varName = varName;
+    }
+
+    public void setDirectValue(String directValue) {
+        this.owner.getCodeNode().directInVal()[this.dataIn] = this.directValue = directValue;
+    }
+
+    public String getDirectValue() {
+        return directValue;
     }
 
     public String getVarName() {

@@ -1,10 +1,10 @@
-package io.github.jeremy.vcp.swing;
+package io.github.jeremyverweij.vcp.swing;
 
-import io.github.jeremy.vcp.App;
-import io.github.jeremy.vcp.components.Component;
-import io.github.jeremy.vcp.components.ContextMenuComponent;
-import io.github.jeremy.vcp.components.NodeComponent;
-import io.github.jeremy.vcp.components.nodeParts.Connector;
+import io.github.jeremyverweij.vcp.App;
+import io.github.jeremyverweij.vcp.components.Component;
+import io.github.jeremyverweij.vcp.components.ContextMenuComponent;
+import io.github.jeremyverweij.vcp.components.NodeComponent;
+import io.github.jeremyverweij.vcp.components.nodeParts.Connector;
 
 import javax.swing.*;
 import java.awt.*;

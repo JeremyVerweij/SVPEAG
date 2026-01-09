@@ -1,7 +1,7 @@
-package io.github.jeremy.vcp.walker.executor;
+package io.github.jeremyverweij.vcp.walker.executor;
 
-import io.github.jeremy.vcp.App;
-import io.github.jeremy.vcp.walker.CodeNode;
+import io.github.jeremyverweij.vcp.App;
+import io.github.jeremyverweij.vcp.walker.CodeNode;
 
 import java.util.HashSet;
 import java.util.Set;

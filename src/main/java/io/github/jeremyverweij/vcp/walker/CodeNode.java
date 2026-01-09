@@ -1,4 +1,4 @@
-package io.github.jeremy.vcp.walker;
+package io.github.jeremyverweij.vcp.walker;
 
 public interface CodeNode {
     int getOutConnections();

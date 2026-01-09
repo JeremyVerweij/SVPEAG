@@ -1,4 +1,4 @@
-package io.github.jeremy.vcp.swing;
+package io.github.jeremyverweij.vcp.swing;
 
 import javax.swing.*;
 import java.awt.*;

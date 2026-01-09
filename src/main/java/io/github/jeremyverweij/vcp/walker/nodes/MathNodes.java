@@ -1,6 +1,6 @@
-package io.github.jeremy.vcp.walker.nodes;
+package io.github.jeremyverweij.vcp.walker.nodes;
 
-import io.github.jeremy.vcp.walker.DataType;
+import io.github.jeremyverweij.vcp.walker.DataType;
 
 public class MathNodes {
     private static class MathNode extends BaseNode{
