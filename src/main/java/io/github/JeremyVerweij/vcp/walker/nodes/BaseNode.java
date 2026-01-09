@@ -1,7 +1,7 @@
-package vcp.walker.nodes;
+package io.github.JeremyVerweij.vcp.walker.nodes;
 
-import vcp.walker.CodeNode;
-import vcp.walker.DataType;
+import io.github.JeremyVerweij.vcp.walker.CodeNode;
+import io.github.JeremyVerweij.vcp.walker.DataType;
 
 public class BaseNode implements CodeNode {
     protected DataType[] dataTypesIn;

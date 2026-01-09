@@ -1,10 +1,10 @@
-package vcp.components;
+package io.github.JeremyVerweij.vcp.components;
 
-import vcp.App;
-import vcp.components.nodeParts.Connector;
-import vcp.components.nodeParts.DataInDisplay;
-import vcp.components.nodeParts.DataOutDisplay;
-import vcp.walker.CodeNode;
+import io.github.JeremyVerweij.vcp.App;
+import io.github.JeremyVerweij.vcp.components.nodeParts.Connector;
+import io.github.JeremyVerweij.vcp.components.nodeParts.DataInDisplay;
+import io.github.JeremyVerweij.vcp.components.nodeParts.DataOutDisplay;
+import io.github.JeremyVerweij.vcp.walker.CodeNode;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

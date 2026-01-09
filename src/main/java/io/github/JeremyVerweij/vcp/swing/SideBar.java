@@ -1,14 +1,12 @@
-package vcp.swing;
+package io.github.JeremyVerweij.vcp.swing;
 
-import vcp.App;
-import vcp.components.NodeComponent;
-import vcp.walker.CodeNode;
-import vcp.walker.DataType;
-import vcp.walker.LoadAndSaveState;
+import io.github.JeremyVerweij.vcp.App;
+import io.github.JeremyVerweij.vcp.components.NodeComponent;
+import io.github.JeremyVerweij.vcp.walker.CodeNode;
+import io.github.JeremyVerweij.vcp.walker.DataType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;

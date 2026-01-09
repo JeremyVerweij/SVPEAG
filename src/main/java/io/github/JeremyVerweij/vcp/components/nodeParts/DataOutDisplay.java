@@ -1,10 +1,10 @@
-package vcp.components.nodeParts;
+package io.github.JeremyVerweij.vcp.components.nodeParts;
 
-import vcp.components.NodeComponent;
+import io.github.JeremyVerweij.vcp.components.NodeComponent;
 
 import java.awt.*;
 
-import static vcp.components.NodeComponent.DATA_IN_AND_OUT_WIDTH;
+import static io.github.JeremyVerweij.vcp.components.NodeComponent.DATA_IN_AND_OUT_WIDTH;
 
 public class DataOutDisplay {
     private final int xOffset, yOffset;

@@ -1,4 +1,4 @@
-package vcp.swing;
+package io.github.JeremyVerweij.vcp.swing;
 
 import javax.swing.*;
 

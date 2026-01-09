@@ -1,15 +1,15 @@
-package vcp;
+package io.github.JeremyVerweij.vcp;
 
-import vcp.components.ContextMenuComponent;
-import vcp.components.NodeComponent;
-import vcp.swing.PlayGround;
-import vcp.swing.SideBar;
-import vcp.swing.Window;
-import vcp.walker.CodeNode;
-import vcp.walker.DataType;
-import vcp.walker.LoadAndSaveState;
-import vcp.walker.NodeColors;
-import vcp.walker.executor.CodeWalker;
+import io.github.JeremyVerweij.vcp.components.ContextMenuComponent;
+import io.github.JeremyVerweij.vcp.components.NodeComponent;
+import io.github.JeremyVerweij.vcp.swing.PlayGround;
+import io.github.JeremyVerweij.vcp.swing.SideBar;
+import io.github.JeremyVerweij.vcp.swing.Window;
+import io.github.JeremyVerweij.vcp.walker.CodeNode;
+import io.github.JeremyVerweij.vcp.walker.DataType;
+import io.github.JeremyVerweij.vcp.walker.LoadAndSaveState;
+import io.github.JeremyVerweij.vcp.walker.NodeColors;
+import io.github.JeremyVerweij.vcp.walker.executor.CodeWalker;
 
 import java.awt.*;
 import java.util.ArrayList;
