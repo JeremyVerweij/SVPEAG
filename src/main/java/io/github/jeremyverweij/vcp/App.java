@@ -157,7 +157,12 @@ public class App {
     }
 
     public void addDefaultNodes(){
-        addNode(RunNode.class, Color.GREEN);
+        addNode(FunctionNodes.MainNode.class, Color.GREEN);
+        addNode(FunctionNodes.FunctionNode.class, Color.GREEN);
+        addNode(FunctionNodes.ReturnNode.class, Color.GREEN);
+        addNode(FunctionNodes.Call_FunctionNode.class, Color.GREEN);
+        addNode(FunctionNodes.Set_ParamNode.class, Color.GREEN);
+        addNode(FunctionNodes.Get_ParamNode.class, Color.GREEN);
 
         addNode(MathNodes.AddNode.class, Color.MAGENTA);
         addNode(MathNodes.MinusNode.class, Color.MAGENTA);
@@ -193,7 +198,7 @@ public class App {
         addNode(LogicNodes.XnorNode.class, Color.CYAN);
         addNode(LogicNodes.XorNode.class, Color.CYAN);
 
-        addCategory(Color.GREEN, "Start");
+        addCategory(Color.GREEN, "Function");
         addCategory(Color.MAGENTA, "Math");
         addCategory(Color.YELLOW, "Flow");
         addCategory(Color.ORANGE, "Variables");

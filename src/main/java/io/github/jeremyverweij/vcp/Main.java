@@ -1,11 +1,10 @@
 package io.github.jeremyverweij.vcp;
 
 import io.github.jeremyverweij.vcp.walker.CodeNode;
+import io.github.jeremyverweij.vcp.walker.nodes.FunctionNodes;
 import io.github.jeremyverweij.vcp.walker.nodes.MathNodes;
-import io.github.jeremyverweij.vcp.walker.nodes.RunNode;
 import io.github.jeremyverweij.vcp.walker.nodes.VarNodes;
 
-import java.awt.*;
 import java.util.Objects;
 import java.util.Set;
 
@@ -33,7 +32,7 @@ public class Main {
 
     private static void walkNode(StringBuilder output, int indent, CodeNode node, Set<String> definedVars){
         switch (node) {
-            case RunNode ignore -> {
+            case FunctionNodes.MainNode ignore -> {
                 output.repeat("\t", indent).append("void main(){\n");
                 runOutNodeIfPresent(output, indent + 1, node, definedVars, 0);
                 output.repeat("\t", indent).append("}");

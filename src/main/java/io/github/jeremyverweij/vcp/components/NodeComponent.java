@@ -35,8 +35,8 @@ public class NodeComponent extends Component{
     }
 
     private void calcHeight(){
-        int maxValues = Math.max(this.codeNode.getOutConnections(),
-                this.codeNode.dataInputs() + (this.codeNode.hasDataOutput() ? 1 : 0));
+        int maxValues = Math.max(Math.max(this.codeNode.getOutConnections(),
+                this.codeNode.dataInputs() + (this.codeNode.hasDataOutput() ? 1 : 0)), 1);
 
         int valuesHeight = maxValues * 20;
 
@@ -46,7 +46,7 @@ public class NodeComponent extends Component{
     }
 
     private void calcWidth(){
-        int valuesWidth = (this.codeNode.hasInConnection() ? 100 : 0) +
+        int valuesWidth = (this.codeNode.hasInConnection() ? 100 : 20) +
                 (this.codeNode.getOutConnections() > 0 ? 100 : 0) +
                 (this.codeNode.dataInputs() > 0 || this.codeNode.hasDataOutput() ? DATA_IN_AND_OUT_WIDTH : 0);
 
@@ -56,7 +56,7 @@ public class NodeComponent extends Component{
     }
 
     private void initDataInDisplays(){
-        int x = this.codeNode.hasInConnection() ? 100 : 0;
+        int x = this.codeNode.hasInConnection() ? 100 : 40;
 
         for (int i = 0; i < this.dataInDisplays.length; i++) {
             this.dataInDisplays[i] = new DataInDisplay(i, this, x,
@@ -65,7 +65,7 @@ public class NodeComponent extends Component{
     }
 
     private void initDataOutDisplay(){
-        int x = this.codeNode.hasInConnection() ? 100 : 0;
+        int x = this.codeNode.hasInConnection() ? 100 : 40;
 
         if (codeNode.hasDataOutput())
             this.dataOutDisplay = new DataOutDisplay(this, x, 5);

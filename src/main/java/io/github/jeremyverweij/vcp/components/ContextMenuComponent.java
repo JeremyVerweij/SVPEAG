@@ -86,7 +86,10 @@ public class ContextMenuComponent extends Component{
             Map.Entry<String, Boolean> popup = createPopup(component.getDataInDisplays()[i].getDirectValue(),
                     component.getDataInDisplays()[i].getVarName(),
                     component.codeNode.getDataInTypes()[i],
-                    component.codeNode.getLabelForData(i, false), true, component.codeNode.canUseSuperTypeClass());
+                    component.codeNode.getLabelForData(i, false),
+                    true,
+                    component.codeNode.canUseSuperTypeClass(),
+                    !component.codeNode.hasInConnection());
 
             if (popup == null) return;
 
@@ -109,7 +112,10 @@ public class ContextMenuComponent extends Component{
             Map.Entry<String, Boolean> popup = createPopup(null,
                     component.getDataOutDisplay().getVarName(),
                     component.codeNode.getDataOutTypes(),
-                    component.codeNode.getLabelForData(0 , true), false, component.codeNode.canUseSuperTypeClass());
+                    component.codeNode.getLabelForData(0 , true),
+                    false,
+                    component.codeNode.canUseSuperTypeClass(),
+                    !component.codeNode.hasInConnection());
 
             if (popup == null) return;
 
@@ -121,7 +127,7 @@ public class ContextMenuComponent extends Component{
         }
     }
 
-    private Map.Entry<String, Boolean> createPopup(String initialValue, String varName, DataType dataType, String label, boolean allowDirect, boolean allowSuperTypes){
+    private Map.Entry<String, Boolean> createPopup(String initialValue, String varName, DataType dataType, String label, boolean allowDirect, boolean allowSuperTypes, boolean isStartingPoint){
         JOptionPane pane = new JOptionPane();
 
         pane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
@@ -135,9 +141,9 @@ public class ContextMenuComponent extends Component{
         if(varName != null) if(app.existVar(varName)) comboBox.setSelectedItem(varName);
         JCheckBox checkBox = new JCheckBox("Use var instead of direct value: ", varName != null);
 
-        pane.add(comboBox, 1);
+        if(!isStartingPoint) pane.add(comboBox, 1);
 
-        if (allowDirect)
+        if (allowDirect && !isStartingPoint)
             pane.add(checkBox, 2);
 
         JDialog dialog = pane.createDialog(label);
