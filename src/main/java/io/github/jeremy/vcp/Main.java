@@ -1,9 +1,9 @@
-package io.github.JeremyVerweij.vcp;
+package io.github.jeremy.vcp;
 
-import io.github.JeremyVerweij.vcp.walker.CodeNode;
-import io.github.JeremyVerweij.vcp.walker.nodes.MathNodes;
-import io.github.JeremyVerweij.vcp.walker.nodes.RunNode;
-import io.github.JeremyVerweij.vcp.walker.nodes.VarNodes;
+import io.github.jeremy.vcp.walker.CodeNode;
+import io.github.jeremy.vcp.walker.nodes.MathNodes;
+import io.github.jeremy.vcp.walker.nodes.RunNode;
+import io.github.jeremy.vcp.walker.nodes.VarNodes;
 
 import java.awt.*;
 import java.util.Objects;
@@ -13,7 +13,7 @@ public class Main {
     public static App app;
 
     public static void main(String[] args) {
-        app = new App("io/github/JeremyVerweij/vcp");
+        app = new App("io/github/jeremy/vcp");
         app.setCodeWalker(Main::walkNode);
 
         app.addNode(RunNode.class, Color.GREEN);

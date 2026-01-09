@@ -1,9 +1,9 @@
-package io.github.JeremyVerweij.vcp.swing;
+package io.github.jeremy.vcp.swing;
 
-import io.github.JeremyVerweij.vcp.App;
-import io.github.JeremyVerweij.vcp.components.NodeComponent;
-import io.github.JeremyVerweij.vcp.walker.CodeNode;
-import io.github.JeremyVerweij.vcp.walker.DataType;
+import io.github.jeremy.vcp.App;
+import io.github.jeremy.vcp.components.NodeComponent;
+import io.github.jeremy.vcp.walker.CodeNode;
+import io.github.jeremy.vcp.walker.DataType;
 
 import javax.swing.*;
 import java.awt.*;

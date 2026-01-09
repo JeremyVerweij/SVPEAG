@@ -1,7 +1,7 @@
-package io.github.JeremyVerweij.vcp.components.nodeParts;
+package io.github.jeremy.vcp.components.nodeParts;
 
-import io.github.JeremyVerweij.vcp.components.NodeComponent;
-import io.github.JeremyVerweij.vcp.walker.nodes.BaseNode;
+import io.github.jeremy.vcp.components.NodeComponent;
+import io.github.jeremy.vcp.walker.nodes.BaseNode;
 
 import java.awt.*;
 

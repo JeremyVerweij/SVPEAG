@@ -1,10 +1,10 @@
-package io.github.JeremyVerweij.vcp.components.nodeParts;
+package io.github.jeremy.vcp.components.nodeParts;
 
-import io.github.JeremyVerweij.vcp.components.NodeComponent;
+import io.github.jeremy.vcp.components.NodeComponent;
 
 import java.awt.*;
 
-import static io.github.JeremyVerweij.vcp.components.NodeComponent.DATA_IN_AND_OUT_WIDTH;
+import static io.github.jeremy.vcp.components.NodeComponent.DATA_IN_AND_OUT_WIDTH;
 
 public class DataInDisplay {
     private final int xOffset, yOffset;

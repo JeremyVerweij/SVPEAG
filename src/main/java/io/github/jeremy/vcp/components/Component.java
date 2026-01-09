@@ -1,7 +1,7 @@
-package io.github.JeremyVerweij.vcp.components;
+package io.github.jeremy.vcp.components;
 
-import io.github.JeremyVerweij.vcp.App;
-import io.github.JeremyVerweij.vcp.swing.PlayGround;
+import io.github.jeremy.vcp.App;
+import io.github.jeremy.vcp.swing.PlayGround;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

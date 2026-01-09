@@ -1,4 +1,4 @@
-package io.github.JeremyVerweij.vcp.walker;
+package io.github.jeremy.vcp.walker;
 
 import java.awt.*;
 import java.util.Comparator;

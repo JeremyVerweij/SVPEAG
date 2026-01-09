@@ -1,4 +1,4 @@
-package io.github.JeremyVerweij.vcp.walker.nodes;
+package io.github.jeremy.vcp.walker.nodes;
 
 public class RunNode extends BaseNode {
     @Override
