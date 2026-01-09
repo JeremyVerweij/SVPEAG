@@ -15,14 +15,16 @@ public class DataType {
     public static class StringType extends DataType{}
 
     public static class NumberType extends DataType{}
+    public static class IntLikeType extends NumberType{}
+    public static class FloatLikeType extends NumberType{}
 
-    public static class ByteType extends NumberType{}
-    public static class ShortType extends NumberType{}
-    public static class IntType extends NumberType{}
-    public static class LongType extends NumberType{}
+    public static class ByteType extends IntLikeType{}
+    public static class ShortType extends IntLikeType{}
+    public static class IntType extends IntLikeType{}
+    public static class LongType extends IntLikeType{}
 
-    public static class FloatType extends NumberType{}
-    public static class DoubleType extends NumberType{}
+    public static class FloatType extends FloatLikeType{}
+    public static class DoubleType extends FloatLikeType{}
 
     public static class BooleanType extends NumberType{}
 

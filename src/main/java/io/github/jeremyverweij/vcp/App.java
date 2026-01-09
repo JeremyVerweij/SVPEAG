@@ -10,6 +10,7 @@ import io.github.jeremyverweij.vcp.walker.DataType;
 import io.github.jeremyverweij.vcp.walker.LoadAndSaveState;
 import io.github.jeremyverweij.vcp.walker.NodeColors;
 import io.github.jeremyverweij.vcp.walker.executor.CodeWalker;
+import io.github.jeremyverweij.vcp.walker.nodes.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -135,5 +136,49 @@ public class App {
 
     public Map<String, DataType> getVars() {
         return this.variables;
+    }
+
+    public void addDefaultNodes(){
+        addNode(RunNode.class, Color.GREEN);
+
+        addNode(MathNodes.AddNode.class, Color.MAGENTA);
+        addNode(MathNodes.MinusNode.class, Color.MAGENTA);
+        addNode(MathNodes.MultiplyNode.class, Color.MAGENTA);
+        addNode(MathNodes.DivideNode.class, Color.MAGENTA);
+
+        addNode(VarNodes.Set_ByteNode.class, Color.ORANGE);
+        addNode(VarNodes.Set_ShortNode.class, Color.ORANGE);
+        addNode(VarNodes.Set_IntNode.class, Color.ORANGE);
+        addNode(VarNodes.Set_LongNode.class, Color.ORANGE);
+        addNode(VarNodes.Set_FloatNode.class, Color.ORANGE);
+        addNode(VarNodes.Set_DoubleNode.class, Color.ORANGE);
+        addNode(VarNodes.Set_BooleanNode.class, Color.ORANGE);
+        addNode(VarNodes.Set_CharNode.class, Color.ORANGE);
+        addNode(VarNodes.Set_StringNode.class, Color.ORANGE);
+
+        addNode(ConditionalNotes.IfNode.class, Color.YELLOW);
+        addNode(ConditionalNotes.If_ElseNode.class, Color.YELLOW);
+        addNode(ConditionalNotes.WhileNode.class, Color.YELLOW);
+        addNode(ConditionalNotes.ForNode.class, Color.YELLOW);
+
+        addNode(LogicNodes.EqualsNode.class, Color.CYAN);
+        addNode(LogicNodes.Not_EqualsNode.class, Color.CYAN);
+        addNode(LogicNodes.Greater_ThanNode.class, Color.CYAN);
+        addNode(LogicNodes.Greater_Than_EqualsNode.class, Color.CYAN);
+        addNode(LogicNodes.Smaller_ThanNode.class, Color.CYAN);
+        addNode(LogicNodes.Smaller_Than_EqualsNode.class, Color.CYAN);
+        addNode(LogicNodes.OrNode.class, Color.CYAN);
+        addNode(LogicNodes.AndNode.class, Color.CYAN);
+        addNode(LogicNodes.NorNode.class, Color.CYAN);
+        addNode(LogicNodes.NandNode.class, Color.CYAN);
+        addNode(LogicNodes.NotNode.class, Color.CYAN);
+        addNode(LogicNodes.XnorNode.class, Color.CYAN);
+        addNode(LogicNodes.XorNode.class, Color.CYAN);
+
+        addCategory(Color.GREEN, "Start");
+        addCategory(Color.MAGENTA, "Math");
+        addCategory(Color.YELLOW, "Flow");
+        addCategory(Color.ORANGE, "Variables");
+        addCategory(Color.CYAN, "Logic");
     }
 }

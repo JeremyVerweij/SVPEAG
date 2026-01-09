@@ -24,10 +24,17 @@ public class VarNodes {
         protected abstract DataType getType();
     }
 
-    public static class Set_FloatNode extends VarNode{
+    public static class Set_ByteNode extends VarNode{
         @Override
         protected DataType getType() {
-            return new DataType.FloatType();
+            return new DataType.ByteType();
+        }
+    }
+
+    public static class Set_ShortNode extends VarNode{
+        @Override
+        protected DataType getType() {
+            return new DataType.ShortType();
         }
     }
 
@@ -35,6 +42,48 @@ public class VarNodes {
         @Override
         protected DataType getType() {
             return new DataType.IntType();
+        }
+    }
+
+    public static class Set_LongNode extends VarNode{
+        @Override
+        protected DataType getType() {
+            return new DataType.LongType();
+        }
+    }
+
+    public static class Set_FloatNode extends VarNode{
+        @Override
+        protected DataType getType() {
+            return new DataType.FloatType();
+        }
+    }
+
+    public static class Set_DoubleNode extends VarNode{
+        @Override
+        protected DataType getType() {
+            return new DataType.DoubleType();
+        }
+    }
+
+    public static class Set_BooleanNode extends VarNode{
+        @Override
+        protected DataType getType() {
+            return new DataType.BooleanType();
+        }
+    }
+
+    public static class Set_CharNode extends VarNode{
+        @Override
+        protected DataType getType() {
+            return new DataType.CharType();
+        }
+    }
+
+    public static class Set_StringNode extends VarNode{
+        @Override
+        protected DataType getType() {
+            return new DataType.StringType();
         }
     }
 }

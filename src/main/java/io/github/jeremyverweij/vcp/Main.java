@@ -16,18 +16,7 @@ public class Main {
         app = new App("io/github/jeremyverweij/vcp");
         app.setCodeWalker(Main::walkNode);
 
-        app.addNode(RunNode.class, Color.GREEN);
-        app.addNode(MathNodes.AddNode.class, Color.CYAN);
-        app.addNode(MathNodes.MinusNode.class, Color.CYAN);
-        app.addNode(MathNodes.MultiplyNode.class, Color.CYAN);
-        app.addNode(MathNodes.DivideNode.class, Color.CYAN);
-        app.addNode(VarNodes.Set_IntNode.class, Color.ORANGE);
-        app.addNode(VarNodes.Set_FloatNode.class, Color.ORANGE);
-
-
-        app.addCategory(Color.GREEN, "Start");
-        app.addCategory(Color.CYAN, "Math");
-        app.addCategory(Color.ORANGE, "Variables");
+        app.addDefaultNodes();
 
         app.start();
     }

@@ -57,8 +57,10 @@ public class ContextMenuComponent extends Component{
             g2.drawLine(x, y, x + width, y);
             y += 20;
 
-            g2.drawString("Edit '" + component.codeNode.getLabelForData(0, true) + "'", x + 2, y - 6);
-            g2.drawLine(x, y, x + width, y);
+            if (component.codeNode.hasDataOutput()){
+                g2.drawString("Edit '" + component.codeNode.getLabelForData(0, true) + "'", x + 2, y - 6);
+                g2.drawLine(x, y, x + width, y);
+            }
 
             y += 20;
         }
@@ -102,7 +104,7 @@ public class ContextMenuComponent extends Component{
                 component.getDataInDisplays()[i].setVarName(null);
                 component.getDataInDisplays()[i].setDirectValue(popup.getKey());
             }
-        } else {
+        } else if (component.codeNode.hasDataOutput()){
             //output
             Map.Entry<String, Boolean> popup = createPopup(null,
                     component.getDataOutDisplay().getVarName(),
