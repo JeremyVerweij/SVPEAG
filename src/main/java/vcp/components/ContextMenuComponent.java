@@ -5,7 +5,6 @@ import vcp.walker.DataType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 import java.util.AbstractMap;
 import java.util.Map;
@@ -120,9 +119,6 @@ public class ContextMenuComponent extends Component{
         }
     }
 
-    private final static String CREATE_NEW_VAR_STRING = "---Create New Variable---";
-
-    @SuppressWarnings("deprecation")
     private Map.Entry<String, Boolean> createPopup(String initialValue, String varName, DataType dataType, String label, boolean allowDirect, boolean allowSuperTypes){
         JOptionPane pane = new JOptionPane();
 
@@ -134,19 +130,13 @@ public class ContextMenuComponent extends Component{
         }
 
         JComboBox<String> comboBox = new JComboBox<>(app.getVarsForType(dataType, allowSuperTypes));
-        if(varName != null) if(app.existVar(dataType, varName)) comboBox.setSelectedItem(varName);
+        if(varName != null) if(app.existVar(varName)) comboBox.setSelectedItem(varName);
         JCheckBox checkBox = new JCheckBox("Use var instead of direct value: ", varName != null);
 
         pane.add(comboBox, 1);
 
         if (allowDirect)
             pane.add(checkBox, 2);
-
-        //create option to create new var!!!
-        comboBox.addItem(CREATE_NEW_VAR_STRING);
-        comboBox.setSelectedItem(CREATE_NEW_VAR_STRING);
-        JTextField textField = new JTextField("new_var_name");
-        pane.add(textField, 2);
 
         JDialog dialog = pane.createDialog(label);
         dialog.show();
@@ -161,23 +151,9 @@ public class ContextMenuComponent extends Component{
             return null;
 
         if(selectedValue instanceof Integer){
-            int i = ((Integer)selectedValue).intValue();
+            int i = (Integer) selectedValue;
             if (i != 0) return null;
         }else return null;
-
-        if (!direct && Objects.equals(rString, CREATE_NEW_VAR_STRING)){
-            String var = textField.getText();
-
-            if(var.matches("[A-Za-z][A-Za-z0-9_]*") && !app.existVar(dataType, var)){
-                //create var
-                app.createVar(dataType, var);
-                rString = var;
-            }else{
-                //use direct
-                direct = true;
-                rString = (String) pane.getInputValue();
-            }
-        }
 
         return new AbstractMap.SimpleEntry<>(rString, direct);
     }

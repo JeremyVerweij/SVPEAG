@@ -1,13 +1,11 @@
 package vcp;
 
 import vcp.walker.CodeNode;
-import vcp.walker.LoadAndSaveState;
 import vcp.walker.nodes.MathNodes;
 import vcp.walker.nodes.RunNode;
 import vcp.walker.nodes.VarNodes;
 
 import java.awt.*;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,7 +13,7 @@ public class Main {
     public static App app;
 
     public static void main(String[] args) {
-        app = new App("vcp", App.NO_OPTIONS);
+        app = new App("vcp");
         app.setCodeWalker(Main::walkNode);
 
         app.addNode(RunNode.class, Color.GREEN);

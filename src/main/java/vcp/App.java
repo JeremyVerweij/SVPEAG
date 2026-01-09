@@ -2,7 +2,6 @@ package vcp;
 
 import vcp.components.ContextMenuComponent;
 import vcp.components.NodeComponent;
-import vcp.swing.CommandLineWindow;
 import vcp.swing.PlayGround;
 import vcp.swing.SideBar;
 import vcp.swing.Window;
@@ -19,12 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 public class App {
-    public static final int NO_OPTIONS = 0;
-
-    private static boolean checkOption(int options, int option){
-        return (options & option) != 0;
-    }
-
     private final Window mainWindow;
     private final PlayGround playGround;
     private final SideBar sideBar;
@@ -33,18 +26,16 @@ public class App {
     private final Map<String, DataType> variables;
     private final LoadAndSaveState loadAndSaveState;
     private final List<NodeComponent> startPoints;
-    private final int options;
 
     private CodeWalker codeWalker;
 
-    public App(String name, int options){
-        this.options = options;
+    public App(String name){
         this.mainWindow = new Window(name);
         this.contextMenu = new ContextMenuComponent(this, 0 , 0);
         this.playGround = new PlayGround(this.contextMenu, this);
+        this.variables = new HashMap<>();
         this.sideBar = new SideBar(this);
         this.nodeColors = new NodeColors();
-        this.variables = new HashMap<>();
         this.loadAndSaveState = new LoadAndSaveState(this);
         this.startPoints = new ArrayList<>();
 
@@ -56,7 +47,7 @@ public class App {
     }
 
     public App(String name, App app){
-        this(name, app.options);
+        this(name);
         this.codeWalker = app.codeWalker;
         this.nodeColors = app.nodeColors;
     }
@@ -79,15 +70,20 @@ public class App {
 
     public void createVar(DataType dataType, String name){
         this.variables.put(name, dataType);
+        this.sideBar.addVar(name);
     }
 
-    public boolean existVar(DataType dataType, String name){
-        if (!this.variables.containsKey(name)) return false;
-        return this.variables.get(name).equals(dataType);
+    public void removeVar(String removeVar) {
+        this.variables.remove(removeVar);
+        this.sideBar.removeVar(removeVar);
+    }
+
+    public boolean existVar(String name){
+        return this.variables.containsKey(name);
     }
 
     public String[] getVarsForType(DataType dataType, boolean allowSuperTypes){
-        return this.variables.keySet().stream().filter((e) -> existVar(dataType, e)).filter((e) -> {
+        return this.variables.keySet().stream().filter(this::existVar).filter((e) -> {
             if (allowSuperTypes) return true;
             return dataType.getClass() == this.variables.get(e).getClass();
         }).toArray(String[]::new);
@@ -115,10 +111,6 @@ public class App {
         this.mainWindow.setVisible(true);
     }
 
-    public void removeVar(String removeVar) {
-        this.variables.remove(removeVar);
-    }
-
     public String generate(){
         StringBuilder builder = new StringBuilder();
         for (NodeComponent startPoint : this.startPoints) {
@@ -133,6 +125,7 @@ public class App {
     }
 
     public void load(String path){
+        this.playGround.getAllComponents().clear();
         this.loadAndSaveState.load(path);
     }
 

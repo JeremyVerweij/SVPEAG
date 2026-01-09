@@ -1,5 +1,6 @@
 package vcp.walker;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,5 +41,24 @@ public class DataType {
     @Override
     public String toString() {
         return this.getClass().getName().toLowerCase().replace("type", "");
+    }
+
+    public static DataType getDataType(String t){
+        Class<? extends DataType> clazz = null;
+
+        for (Class<? extends DataType> allType : allTypes) {
+            if (allType.getSimpleName().equals(t)){
+                clazz = allType;
+                break;
+            }
+        }
+
+        if (clazz == null) return null;
+
+        try {
+            return clazz.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

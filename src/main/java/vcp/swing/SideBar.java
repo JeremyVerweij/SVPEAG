@@ -3,6 +3,7 @@ package vcp.swing;
 import vcp.App;
 import vcp.components.NodeComponent;
 import vcp.walker.CodeNode;
+import vcp.walker.DataType;
 import vcp.walker.LoadAndSaveState;
 
 import javax.swing.*;
@@ -13,28 +14,46 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SideBar extends JScrollPane {
-    private static final JPanel content = new JPanel();
+    private final JPanel content;
     private final App app;
     private final Map<Color, String> colorCategories;
 
+    private JComboBox<String> existingVars;
+
     public SideBar(App app){
-        super(content);
+        this.content = new JPanel();
+
+        setupScrollBar();
 
         this.app = app;
         this.colorCategories = new HashMap<>();
 
         setPreferredSize(new Dimension(300, 0));
-        setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         reloadComponents();
+    }
+
+    private void setupScrollBar(){
+        setLayout(new ScrollPaneLayout.UIResource());
+        setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
+        setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
+        setViewport(createViewport());
+        setVerticalScrollBar(createVerticalScrollBar());
+        setHorizontalScrollBar(createHorizontalScrollBar());
+        setViewportView(content);
+        setOpaque(true);
+        updateUI();
+
+        if (!this.getComponentOrientation().isLeftToRight()) {
+            viewport.setViewPosition(new Point(Integer.MAX_VALUE, 0));
+        }
     }
 
     public void reloadComponents(){
         content.removeAll();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
-//        content.add(generateButton());
+        createVarCreatorButton();
 
         content.add(Box.createVerticalStrut(10));
 
@@ -45,14 +64,54 @@ public class SideBar extends JScrollPane {
         this.repaint();
     }
 
-    private JButton generateButton(){
-        JButton button = new JButton("Generate!");
+    private void createVarCreatorButton() {
+        JTextField addVarName = new JTextField("var_name");
+        addVarName.setMaximumSize(new Dimension(3000, 30));
 
-        button.setAlignmentX(CENTER_ALIGNMENT);
-        button.setFocusPainted(false);
-        button.addActionListener(this::onGenerateClick);
+        JComboBox<String> addVarType = new JComboBox<>(DataType.allTypes.stream().map(Class::getSimpleName).toArray(String[]::new));
+        addVarType.setMaximumSize(new Dimension(3000, 30));
+        addVarType.setFocusable(false);
 
-        return button;
+        final JButton addVarButton = getAddVarButton(addVarName, addVarType);
+
+        content.add(addVarName);
+        content.add(addVarType);
+        content.add(addVarButton);
+
+        content.add(Box.createVerticalStrut(10));
+
+        existingVars = new JComboBox<>(app.getVars().keySet().toArray(String[]::new));
+        existingVars.setMaximumSize(new Dimension(3000, 30));
+        existingVars.setFocusable(false);
+
+        JButton existingVarDeleteButton = new JButton("Delete Var");
+        existingVarDeleteButton.setAlignmentX(CENTER_ALIGNMENT);
+        existingVarDeleteButton.setFocusable(false);
+        existingVarDeleteButton.addActionListener((ignore) -> {
+            String varName = ((String) existingVars.getSelectedItem());
+
+            if (varName != null){
+                app.removeVar(varName);
+            }
+        });
+
+        content.add(existingVars);
+        content.add(existingVarDeleteButton);
+    }
+
+    private JButton getAddVarButton(JTextField addVarName, JComboBox<String> addVarType) {
+        JButton addVarButton = new JButton("Add variable");
+        addVarButton.setAlignmentX(CENTER_ALIGNMENT);
+        addVarButton.setFocusable(false);
+        addVarButton.addActionListener((ignore) -> {
+            String name = addVarName.getText();
+
+            if (name.matches("[A-Za-z][A-Za-z0-9_]*") && !app.existVar(name)){
+                DataType dataType = DataType.getDataType(((String) addVarType.getSelectedItem()));
+                app.createVar(dataType, name);
+            }
+        });
+        return addVarButton;
     }
 
     private void createCategory(Map.Entry<Color, String> category){
@@ -101,16 +160,12 @@ public class SideBar extends JScrollPane {
         }
     }
 
-    private void onGenerateClick(ActionEvent actionEvent) {
-        new LoadAndSaveState(this.app).save("P:\\test.coding_save");
+    public void addVar(String name){
+        this.existingVars.addItem(name);
+    }
 
-        for (vcp.components.Component component : this.app.getPlayGround().getAllComponents()) {
-            if (component instanceof NodeComponent nodeComponent){
-                if(!nodeComponent.getCodeNode().hasInConnection()){
-                    this.app.getCodeWalker().eval(nodeComponent.getCodeNode());
-                }
-            }
-        }
+    public void removeVar(String name){
+        this.existingVars.removeItem(name);
     }
 
     public Map<Color, String> getColorCategories() {
