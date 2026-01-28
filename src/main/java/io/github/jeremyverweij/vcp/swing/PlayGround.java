@@ -1,6 +1,6 @@
 package io.github.jeremyverweij.vcp.swing;
 
-import io.github.jeremyverweij.vcp.App;
+import io.github.jeremyverweij.vcp.VcpApp;
 import io.github.jeremyverweij.vcp.components.Component;
 import io.github.jeremyverweij.vcp.components.ContextMenuComponent;
 import io.github.jeremyverweij.vcp.components.NodeComponent;
@@ -17,7 +17,7 @@ import java.util.List;
 public class PlayGround extends JComponent {
     private static final double minScale = 0.5, maxScale = 3.0;
 
-    private final App app;
+    private final VcpApp vcpApp;
 
     private double scale = 1.0; // zoom
     private double offsetX = 0, offsetY = 0; //pan
@@ -30,10 +30,10 @@ public class PlayGround extends JComponent {
     private final ContextMenuComponent contextMenu;
     private final List<Component> components;
 
-    public PlayGround(ContextMenuComponent contextMenu, App app){
+    public PlayGround(ContextMenuComponent contextMenu, VcpApp vcpApp){
         this.components = new ArrayList<>();
         this.contextMenu = contextMenu;
-        this.app = app;
+        this.vcpApp = vcpApp;
 
         setLayout(null);
         setOpaque(true);
@@ -83,7 +83,7 @@ public class PlayGround extends JComponent {
 
         if (component instanceof NodeComponent nodeComponent){
             if (!nodeComponent.getCodeNode().hasInConnection())
-                app.getStartPoints().add(nodeComponent);
+                vcpApp.getStartPoints().add(nodeComponent);
         }
     }
 
@@ -92,7 +92,7 @@ public class PlayGround extends JComponent {
 
         if (component instanceof NodeComponent nodeComponent){
             if (!nodeComponent.getCodeNode().hasInConnection())
-                app.getStartPoints().remove(nodeComponent);
+                vcpApp.getStartPoints().remove(nodeComponent);
         }
     }
 

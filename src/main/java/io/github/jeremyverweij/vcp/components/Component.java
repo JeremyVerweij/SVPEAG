@@ -1,6 +1,6 @@
 package io.github.jeremyverweij.vcp.components;
 
-import io.github.jeremyverweij.vcp.App;
+import io.github.jeremyverweij.vcp.VcpApp;
 import io.github.jeremyverweij.vcp.swing.PlayGround;
 
 import java.awt.*;
@@ -11,7 +11,7 @@ public abstract class Component {
     public static final int COMPONENT_WIDTH = 0;
     public static final int COMPONENT_HEIGHT = 0;
 
-    protected App app;
+    protected VcpApp vcpApp;
 
     protected int x, y;
     protected int width, height;
@@ -19,12 +19,12 @@ public abstract class Component {
     protected Color foreground;
     protected Color background;
 
-    public Component(App app, int x, int y, Color background) {
-        this(app, x, y, COMPONENT_WIDTH, COMPONENT_HEIGHT, Color.BLACK, background);
+    public Component(VcpApp vcpApp, int x, int y, Color background) {
+        this(vcpApp, x, y, COMPONENT_WIDTH, COMPONENT_HEIGHT, Color.BLACK, background);
     }
 
-    public Component(App app, int x, int y, int width, int height, Color foreground, Color background) {
-        this.app = app;
+    public Component(VcpApp vcpApp, int x, int y, int width, int height, Color foreground, Color background) {
+        this.vcpApp = vcpApp;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -57,10 +57,10 @@ public abstract class Component {
     }
 
     public void repaint(){
-        app.getPlayGround().repaint();
+        vcpApp.getPlayGround().repaint();
     }
 
     public PlayGround getPlayground(){
-        return app.getPlayGround();
+        return vcpApp.getPlayGround();
     }
 }

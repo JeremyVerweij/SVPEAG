@@ -1,6 +1,6 @@
 package io.github.jeremyverweij.vcp.walker.executor;
 
-import io.github.jeremyverweij.vcp.App;
+import io.github.jeremyverweij.vcp.VcpApp;
 import io.github.jeremyverweij.vcp.walker.CodeNode;
 
 import java.util.HashSet;
@@ -10,12 +10,12 @@ import java.util.Set;
 public class CodeWalker {
     private final INodeEvaluator nodeEvaluator;
     private final INodePostProcessor nodePostProcessor;
-    private final App app;
+    private final VcpApp vcpApp;
 
-    public CodeWalker(INodeEvaluator nodeEvaluator, INodePostProcessor nodePostProcessor, App app){
+    public CodeWalker(INodeEvaluator nodeEvaluator, INodePostProcessor nodePostProcessor, VcpApp vcpApp){
         this.nodeEvaluator = nodeEvaluator;
         this.nodePostProcessor = nodePostProcessor;
-        this.app = app;
+        this.vcpApp = vcpApp;
     }
 
     public String eval(CodeNode codeNode){
@@ -25,7 +25,7 @@ public class CodeWalker {
         set.add("");
         this.nodeEvaluator.eval(builder, 0, codeNode, set);
 
-        return nodePostProcessor.process(builder.toString(), app.getConstants());
+        return nodePostProcessor.process(builder.toString(), vcpApp.getConstants());
     }
 
     public interface INodeEvaluator{

@@ -4,7 +4,7 @@ import io.github.jeremyverweij.vcp.components.ContextMenuComponent;
 import io.github.jeremyverweij.vcp.components.NodeComponent;
 import io.github.jeremyverweij.vcp.swing.PlayGround;
 import io.github.jeremyverweij.vcp.swing.SideBar;
-import io.github.jeremyverweij.vcp.swing.Window;
+import io.github.jeremyverweij.vcp.swing.VcpAppWindow;
 import io.github.jeremyverweij.vcp.walker.CodeNode;
 import io.github.jeremyverweij.vcp.walker.DataType;
 import io.github.jeremyverweij.vcp.walker.LoadAndSaveState;
@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class App {
-    private final Window mainWindow;
+public class VcpApp {
+    private final String name;
     private final PlayGround playGround;
     private final SideBar sideBar;
     private final NodeColors nodeColors;
@@ -32,17 +32,18 @@ public class App {
     private final LoadAndSaveState loadAndSaveState;
     private final List<NodeComponent> startPoints;
     private final List<String> constants;
+    private Container owner;
 
     private CodeWalker codeWalker;
 
     /**
      * Creates an app window and creates all the necessary components
      * <br>
-     * Does not show the window yet, use {@link App#start()} to start and display the window
+     * Does not show the window yet, use {@link VcpApp#start()} to start and display the window
      * @param name The name of the window
      */
-    public App(String name){
-        this.mainWindow = new Window(name);
+    public VcpApp(String name){
+        this.name = name;
         this.contextMenu = new ContextMenuComponent(this, 0 , 0);
         this.playGround = new PlayGround(this.contextMenu, this);
         this.variables = new HashMap<>();
@@ -53,26 +54,14 @@ public class App {
         this.constants = new ArrayList<>();
 
         setCodeWalker((a, b, c, d) -> {});
-
-        this.mainWindow.getContentPane().setLayout(new BorderLayout());
-        this.mainWindow.getContentPane().add(this.sideBar, BorderLayout.WEST);
-        this.mainWindow.getContentPane().add(this.playGround, BorderLayout.CENTER);
     }
 
-    /**
-     * Create a callback and sets cleans up everything
-     * @param callback callback for when window is closed
-     */
-    public void addCloseCallBack(Consumer<App> callback){
-        this.mainWindow.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        this.mainWindow.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                callback.accept(App.this);
-                App.this.playGround.getAllComponents().clear();
-                mainWindow.dispose();
-            }
-        });
+    public void setOwner(Container owner){
+        this.owner = owner;
+
+        this.owner.setLayout(new BorderLayout());
+        this.owner.add(this.sideBar, BorderLayout.WEST);
+        this.owner.add(this.playGround, BorderLayout.CENTER);
     }
 
     /**
@@ -81,7 +70,7 @@ public class App {
     public void start(){
         this.sideBar.reloadComponents();
         this.playGround.repaint();
-        this.mainWindow.setVisible(true);
+        this.owner.setVisible(true);
     }
 
     /**
@@ -115,7 +104,7 @@ public class App {
     }
 
     /**
-     * @see App#setCodeWalker(CodeWalker.INodeEvaluator, CodeWalker.INodePostProcessor)
+     * @see VcpApp#setCodeWalker(CodeWalker.INodeEvaluator, CodeWalker.INodePostProcessor)
      */
     public void setCodeWalker(CodeWalker.INodeEvaluator nodeEvaluator) {
         setCodeWalker(nodeEvaluator, (a, b) -> a);
@@ -167,16 +156,12 @@ public class App {
         return this.variables.keySet()
                 .stream()
                 .filter(this::existVar)
-                .filter(e -> allowDirect == e.startsWith("${"))
+                .filter(e -> allowDirect == e.startsWith("${") || allowDirect)
                 .filter((e) -> {
                     if (allowSuperTypes) return dataType.getClass().isAssignableFrom(this.variables.get(e).getClass());
                     return dataType.getClass() == this.variables.get(e).getClass();
                 })
                 .toArray(String[]::new);
-    }
-
-    public Window getMainWindow() {
-        return mainWindow;
     }
 
     public PlayGround getPlayGround() {
@@ -201,6 +186,10 @@ public class App {
 
     public List<String> getConstants() {
         return this.constants;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void addDefaultNodes(){

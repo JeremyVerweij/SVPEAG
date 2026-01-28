@@ -1,6 +1,6 @@
 package io.github.jeremyverweij.vcp.components;
 
-import io.github.jeremyverweij.vcp.App;
+import io.github.jeremyverweij.vcp.VcpApp;
 import io.github.jeremyverweij.vcp.walker.DataType;
 
 import javax.swing.*;
@@ -14,8 +14,8 @@ public class ContextMenuComponent extends Component{
     private boolean visible = false;
     private NodeComponent component = null;
 
-    public ContextMenuComponent(App app, int x, int y) {
-        super(app, x, y, Color.LIGHT_GRAY);
+    public ContextMenuComponent(VcpApp vcpApp, int x, int y) {
+        super(vcpApp, x, y, Color.LIGHT_GRAY);
         this.width = 250;
         this.height = 100;
     }
@@ -137,8 +137,8 @@ public class ContextMenuComponent extends Component{
             pane.setInitialSelectionValue(initialValue);
         }
 
-        JComboBox<String> comboBox = new JComboBox<>(app.getVarsForType(dataType, allowSuperTypes, allowDirect));
-        if(varName != null) if(app.existVar(varName)) comboBox.setSelectedItem(varName);
+        JComboBox<String> comboBox = new JComboBox<>(vcpApp.getVarsForType(dataType, allowSuperTypes, allowDirect));
+        if(varName != null) if(vcpApp.existVar(varName)) comboBox.setSelectedItem(varName);
         JCheckBox checkBox = new JCheckBox("Use var instead of direct value: ", varName != null);
 
         if(!isStartingPoint) pane.add(comboBox, 1);

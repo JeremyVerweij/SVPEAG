@@ -1,6 +1,6 @@
 package io.github.jeremyverweij.vcp.swing;
 
-import io.github.jeremyverweij.vcp.App;
+import io.github.jeremyverweij.vcp.VcpApp;
 import io.github.jeremyverweij.vcp.components.NodeComponent;
 import io.github.jeremyverweij.vcp.walker.CodeNode;
 import io.github.jeremyverweij.vcp.walker.DataType;
@@ -13,17 +13,17 @@ import java.util.Map;
 
 public class SideBar extends JScrollPane {
     private final JPanel content;
-    private final App app;
+    private final VcpApp vcpApp;
     private final Map<Color, String> colorCategories;
 
     private JComboBox<String> existingVars;
 
-    public SideBar(App app){
+    public SideBar(VcpApp vcpApp){
         this.content = new JPanel();
 
         setupScrollBar();
 
-        this.app = app;
+        this.vcpApp = vcpApp;
         this.colorCategories = new HashMap<>();
 
         setPreferredSize(new Dimension(300, 0));
@@ -80,7 +80,7 @@ public class SideBar extends JScrollPane {
 
         content.add(Box.createVerticalStrut(10));
 
-        existingVars = new JComboBox<>(app.getVars()
+        existingVars = new JComboBox<>(vcpApp.getVars()
                 .keySet()
                 .stream()
                 .filter((e) -> !e.startsWith("${"))
@@ -95,7 +95,7 @@ public class SideBar extends JScrollPane {
             String varName = ((String) existingVars.getSelectedItem());
 
             if (varName != null){
-                app.removeVar(varName);
+                vcpApp.removeVar(varName);
             }
         });
 
@@ -110,9 +110,9 @@ public class SideBar extends JScrollPane {
         addVarButton.addActionListener((ignore) -> {
             String name = addVarName.getText();
 
-            if (name.matches("[A-Za-z][A-Za-z0-9_]*") && !app.existVar(name)){
+            if (name.matches("[A-Za-z][A-Za-z0-9_]*") && !vcpApp.existVar(name)){
                 DataType dataType = DataType.getDataType(((String) addVarType.getSelectedItem()));
-                app.createVar(dataType, name);
+                vcpApp.createVar(dataType, name);
             }
         });
         return addVarButton;
@@ -128,7 +128,7 @@ public class SideBar extends JScrollPane {
         label.setHorizontalAlignment(SwingConstants.CENTER);
         content.add(label);
 
-        for (Class<? extends CodeNode> node : this.app.getNodeColors().getNodesFromColor(category.getKey())) {
+        for (Class<? extends CodeNode> node : this.vcpApp.getNodeColors().getNodesFromColor(category.getKey())) {
             content.add(Box.createVerticalStrut(2));
             createNodeCreator(node, category.getKey());
         }
@@ -143,10 +143,10 @@ public class SideBar extends JScrollPane {
         button.setBackground(color);
 
         button.addActionListener((e) -> {
-            Point center = this.app.getPlayGround().getWorldCenter();
+            Point center = this.vcpApp.getPlayGround().getWorldCenter();
 
-            this.app.getPlayGround().addComponent(new NodeComponent(this.app, center.x, center.y, getCodeNode(node)));
-            this.app.getPlayGround().repaint();
+            this.vcpApp.getPlayGround().addComponent(new NodeComponent(this.vcpApp, center.x, center.y, getCodeNode(node)));
+            this.vcpApp.getPlayGround().repaint();
         });
 
         content.add(button);

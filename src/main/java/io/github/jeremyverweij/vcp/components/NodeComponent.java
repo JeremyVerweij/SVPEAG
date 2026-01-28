@@ -1,6 +1,6 @@
 package io.github.jeremyverweij.vcp.components;
 
-import io.github.jeremyverweij.vcp.App;
+import io.github.jeremyverweij.vcp.VcpApp;
 import io.github.jeremyverweij.vcp.components.nodeParts.Connector;
 import io.github.jeremyverweij.vcp.components.nodeParts.DataInDisplay;
 import io.github.jeremyverweij.vcp.components.nodeParts.DataOutDisplay;
@@ -20,8 +20,8 @@ public class NodeComponent extends Component{
     private final Connector[] connectors;
     protected final CodeNode codeNode;
 
-    public NodeComponent(App app, int x, int y, CodeNode codeNode) {
-        super(app, x, y, app.getNodeColors().getColor(codeNode.getClass()));
+    public NodeComponent(VcpApp vcpApp, int x, int y, CodeNode codeNode) {
+        super(vcpApp, x, y, vcpApp.getNodeColors().getColor(codeNode.getClass()));
 
         this.codeNode = codeNode;
         this.dataInDisplays = new DataInDisplay[this.codeNode.dataInputs()];
@@ -145,7 +145,7 @@ public class NodeComponent extends Component{
         }
 
         for (String removeVar : removeVars) {
-            this.app.removeVar(removeVar);
+            this.vcpApp.removeVar(removeVar);
         }
     }
 
@@ -160,7 +160,7 @@ public class NodeComponent extends Component{
             }
         }
 
-        this.app.removeVar(name);
+        this.vcpApp.removeVar(name);
     }
 
     @Override
@@ -207,7 +207,7 @@ public class NodeComponent extends Component{
                 }
             }
 
-            app.requestContextMenu(this);
+            vcpApp.requestContextMenu(this);
         }
     }
 

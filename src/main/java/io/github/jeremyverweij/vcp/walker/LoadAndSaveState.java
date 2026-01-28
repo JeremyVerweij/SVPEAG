@@ -1,6 +1,6 @@
 package io.github.jeremyverweij.vcp.walker;
 
-import io.github.jeremyverweij.vcp.App;
+import io.github.jeremyverweij.vcp.VcpApp;
 import io.github.jeremyverweij.vcp.components.Component;
 import io.github.jeremyverweij.vcp.components.NodeComponent;
 
@@ -11,17 +11,17 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class LoadAndSaveState {
-    private final App app;
+    private final VcpApp vcpApp;
 
-    public LoadAndSaveState(App app) {
-        this.app = app;
+    public LoadAndSaveState(VcpApp vcpApp) {
+        this.vcpApp = vcpApp;
     }
 
     public void save(String path){
         StringBuilder builder = new StringBuilder();
         builder.append("[VARS]\n");
 
-        for (Map.Entry<String, DataType> var : app.getVars().entrySet()) {
+        for (Map.Entry<String, DataType> var : vcpApp.getVars().entrySet()) {
             builder.append(var.getValue().getClass().getName());
             builder.append("|");
             builder.append(var.getKey());
@@ -33,7 +33,7 @@ public class LoadAndSaveState {
         Map<CodeNode, Integer> nodeMapper = new HashMap<>();
 
         int index = 0;
-        for (Component allComponent : app.getPlayGround().getAllComponents()) {
+        for (Component allComponent : vcpApp.getPlayGround().getAllComponents()) {
             if (allComponent instanceof NodeComponent component){
                 builder.append(index);
                 builder.append("|");
@@ -62,7 +62,7 @@ public class LoadAndSaveState {
         }
 
         builder.append("[CONN]\n");
-        for (Component allComponent : app.getPlayGround().getAllComponents()) {
+        for (Component allComponent : vcpApp.getPlayGround().getAllComponents()) {
             if (allComponent instanceof NodeComponent component){
                 int self = nodeMapper.get(component.getCodeNode());
 
@@ -111,7 +111,7 @@ public class LoadAndSaveState {
                 }
 
                 if (dataType != null)
-                    app.createVar(dataType, nameString);
+                    vcpApp.createVar(dataType, nameString);
             }
 
             NodeComponent[] components = new NodeComponent[comps.size()];
@@ -132,7 +132,7 @@ public class LoadAndSaveState {
                 int y = Integer.parseInt(yString);
 
                 Class<? extends CodeNode> nodeClass = null;
-                for (Class<? extends CodeNode> allNode : app.getNodeColors().getAllNodes()) {
+                for (Class<? extends CodeNode> allNode : vcpApp.getNodeColors().getAllNodes()) {
                     if (allNode.getName().equals(nodeString)){
                         nodeClass = allNode;
                         break;
@@ -143,7 +143,7 @@ public class LoadAndSaveState {
 
                 CodeNode node = nodeClass.getConstructor().newInstance();
 
-                NodeComponent component = new NodeComponent(this.app, x, y, node);
+                NodeComponent component = new NodeComponent(this.vcpApp, x, y, node);
 
                 if (hasOut && !outVarString.equals("null")){
                     component.getDataOutDisplay().setVarName(outVarString);
@@ -166,7 +166,7 @@ public class LoadAndSaveState {
                     }
                 }
 
-                this.app.getPlayGround().addComponent(component);
+                this.vcpApp.getPlayGround().addComponent(component);
                 components[index] = component;
             }
 
