@@ -6,49 +6,31 @@ import io.github.jeremyverweij.vcp.swing.PlayGround;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public abstract class Component {
-    public static final boolean DRAW_DEBUG_CORDS = false;
-    public static final int COMPONENT_WIDTH = 0;
-    public static final int COMPONENT_HEIGHT = 0;
-
+@SuppressWarnings("unchecked")
+public abstract class Component<T extends Component<T>> {
     protected VcpApp vcpApp;
-
     protected int x, y;
-    protected int width, height;
 
-    protected Color foreground;
-    protected Color background;
+    private final ComponentStyler<T> painter;
 
-    public Component(VcpApp vcpApp, int x, int y, Color background) {
-        this(vcpApp, x, y, COMPONENT_WIDTH, COMPONENT_HEIGHT, Color.BLACK, background);
-    }
-
-    public Component(VcpApp vcpApp, int x, int y, int width, int height, Color foreground, Color background) {
+    public Component(VcpApp vcpApp, int x, int y, ComponentStyler<T> painter) {
         this.vcpApp = vcpApp;
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
-        this.foreground = foreground;
-        this.background = background;
+        this.painter = painter;
     }
 
     public abstract void onClick(MouseEvent event, Point mouse);
 
     public void draw(Graphics2D g2) {
-        g2.setColor(this.background);
-        g2.fillRect(this.x, this.y, this.width, this.height);
+        if (this.painter == null) throw new RuntimeException("Can't draw component without a painter");
 
-        g2.setColor(this.foreground);
-        g2.drawRect(this.x, this.y, this.width, this.height);
-
-        if (DRAW_DEBUG_CORDS){
-            g2.drawString("(" + this.x + ", " + this.y + ")", this.x, this.y - 2);
-        }
+        this.painter.draw((T) this, g2);
     }
 
     public boolean inBounds(Point point) {
-        return point.x >= x && point.x <= x + width && point.y >= y && point.y <= y + height;
+        return point.x >= x && point.x <= x + this.painter.getWidth((T) this) &&
+                point.y >= y && point.y <= y + this.painter.getHeight((T) this);
     }
 
     public void onDrag(int dx, int dy) {

@@ -7,7 +7,7 @@ public class Main {
 
     public static void main(String[] args) {
         vcpApp = new VcpApp("vcp");
-        vcpApp.addDefaultNodes();
+//        vcpApp.addDefaultNodes();
 
         new VcpAppWindow(vcpApp);
 

@@ -57,8 +57,4 @@ public class VcpAppWindow extends JFrame {
         this.app.getPlayGround().getAllComponents().clear();
         this.dispose();
     }
-
-    public VcpApp getApp() {
-        return app;
-    }
 }

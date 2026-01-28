@@ -1,5 +1,7 @@
 package io.github.jeremyverweij.vcp.walker;
 
+import io.github.jeremyverweij.vcp.data.node.CodeNode;
+
 import java.awt.*;
 import java.util.Comparator;
 import java.util.HashMap;
